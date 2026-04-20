@@ -717,10 +717,22 @@ function renderStory() {
     const theme = short.theme || 'emerald';
     
     // Set theme gradient
-    let bgGradient = 'linear-gradient(135deg, #1B4332 0%, #0F1A14 100%)'; // default emerald
-    if (theme === 'gold') bgGradient = 'linear-gradient(135deg, #D4A853 0%, #8C6A2E 100%)';
-    if (theme === 'ocean') bgGradient = 'linear-gradient(135deg, #023E8A 0%, #001233 100%)';
-    contentWrapper.style.background = bgGradient;
+    const themes = {
+      emerald: 'linear-gradient(135deg, #1B4332 0%, #0F1A14 100%)',
+      gold: 'linear-gradient(135deg, #D4A853 0%, #8C6A2E 100%)',
+      night: 'linear-gradient(135deg, #1A1A1A 0%, #000000 100%)',
+      sand: 'linear-gradient(135deg, #C2A878 0%, #A8813C 100%)',
+      midnight: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
+      royal: 'linear-gradient(135deg, #581C87 0%, #2E1065 100%)',
+      sunset: 'linear-gradient(135deg, #F59E0B 0%, #BE123C 100%)',
+      ocean: 'linear-gradient(135deg, #0284C7 0%, #0C4A6E 100%)',
+      forest: 'linear-gradient(135deg, #065F46 0%, #064E3B 100%)',
+      lavender: 'linear-gradient(135deg, #818CF8 0%, #4F46E5 100%)',
+      rose: 'linear-gradient(135deg, #FB7185 0%, #E11D48 100%)',
+      plum: 'linear-gradient(135deg, #701A75 0%, #4A044E 100%)'
+    };
+    
+    contentWrapper.style.background = themes[theme] || themes.emerald;
 
     contentWrapper.innerHTML = `
       <div class="story-card-content fade-up">

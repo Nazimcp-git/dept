@@ -2798,24 +2798,25 @@ footer ul li a:hover {
 .short-card {
   width: 320px;
   height: 480px;
-  /* 2:3 aspect ratio */
-  border-radius: 20px;
+  border-radius: 24px;
   scroll-snap-align: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 2.5rem 2rem;
+  justify-content: center;
+  padding: 3rem 2rem;
   color: #fff;
   cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .short-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Gradient Themes */
@@ -2836,6 +2837,38 @@ footer ul li a:hover {
   color: #1B4332;
 }
 
+.short-card[data-theme="midnight"] {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+}
+
+.short-card[data-theme="royal"] {
+  background: linear-gradient(135deg, #581C87 0%, #2E1065 100%);
+}
+
+.short-card[data-theme="sunset"] {
+  background: linear-gradient(135deg, #F59E0B 0%, #BE123C 100%);
+}
+
+.short-card[data-theme="ocean"] {
+  background: linear-gradient(135deg, #0284C7 0%, #0C4A6E 100%);
+}
+
+.short-card[data-theme="forest"] {
+  background: linear-gradient(135deg, #065F46 0%, #064E3B 100%);
+}
+
+.short-card[data-theme="lavender"] {
+  background: linear-gradient(135deg, #818CF8 0%, #4F46E5 100%);
+}
+
+.short-card[data-theme="rose"] {
+  background: linear-gradient(135deg, #FB7185 0%, #E11D48 100%);
+}
+
+.short-card[data-theme="plum"] {
+  background: linear-gradient(135deg, #701A75 0%, #4A044E 100%);
+}
+
 /* Subtle overlay pattern */
 .short-card::before {
   content: '';
@@ -2851,12 +2884,11 @@ footer ul li a:hover {
   position: relative;
   z-index: 2;
   font-family: var(--font-serif);
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   line-height: 1.6;
   font-weight: 500;
   text-align: center;
-  margin-top: auto;
-  margin-bottom: auto;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .short-arabic {
