@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noor Al-Quran — Reflections, Tafsir & Lessons from the Quran</title>
+  <meta name="description"
+    content="A premium Islamic knowledge platform for Qur'an-based reflections, tafsir, and thematic studies in English." />
+  <meta property="og:title" content="Noor Al-Quran" />
+  <meta property="og:description" content="Calm, scholarly reflections on the Qur'an." />
+  <meta property="og:type" content="website" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="js/pwa.js"></script>
+</head>
+
+<body>
+
+  <!-- GLOBAL PRELOADER -->
+  <div id="global-preloader" class="preloader-overlay">
+    <div class="preloader-content">
+      <div class="spinner"></div>
+      <p id="preloader-text">Loading Noor Al-Quran...</p>
+      <button id="preloader-retry" class="btn-primary" style="display: none; margin-top: 1.5rem;" onclick="location.reload()">Retry</button>
+    </div>
+  </div>
+
+  <div id="progress-bar"></div>
+  <div class="toast" id="toast"></div>
+
+  <nav id="navbar">
+    <a href="index.html" class="nav-brand">☽ Noor Al-Quran</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#articles">Articles</a></li>
+      <li><a href="#topics">Topics</a></li>
+    </ul>
+
+    <div class="nav-search search-wrapper" id="search-section">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search articles, topics, verses…" autocomplete="off" />
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <!-- Auth UI injected here by auth.js -->
+    </div>
+  </nav>
+
+  <!-- HERO CAROUSEL -->
+  <section class="hero-carousel">
+    <div class="carousel-track" id="hero-carousel-track">
+      <!-- Slides injected via JS -->
+      <div class="carousel-slide">
+        <div class="carousel-card">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-content">
+            <h2 class="carousel-title">Loading Featured Articles...</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="carousel-nav" id="carousel-nav">
+      <!-- Dots injected via JS -->
+    </div>
+  </section>
+
+  <!-- ══ BROWSE BY TOPIC ══ -->
+  <section class="topics-section" id="topics">
+    <div class="topics-header">
+      <span class="section-badge">📚 Browse by Topic</span>
+      <h2>What would you like to explore?</h2>
+      <p>Each category offers a distinct lens through which the Qur'an speaks — choose your path of reflection.</p>
+    </div>
+
+    <div class="topics-grid" id="topics-grid">
+
+      <div class="topic-card" data-cat="Tafsir" onclick="selectTopic('Tafsir')">
+        <div class="topic-icon-wrap">📖</div>
+        <div class="topic-name">Tafsir</div>
+        <div class="topic-desc">Verse-by-verse analysis and scholarly interpretation of Qur'anic passages.</div>
+        <span class="topic-count" id="count-Tafsir">0 articles</span>
+      </div>
+
+      <div class="topic-card" data-cat="Reflection" onclick="selectTopic('Reflection')">
+        <div class="topic-icon-wrap">💭</div>
+        <div class="topic-name">Reflection</div>
+        <div class="topic-desc">Personal and thematic reflections that connect the Qur'an to everyday life.</div>
+        <span class="topic-count" id="count-Reflection">0 articles</span>
+      </div>
+
+      <div class="topic-card" data-cat="Stories" onclick="selectTopic('Stories')">
+        <div class="topic-icon-wrap">📜</div>
+        <div class="topic-name">Stories</div>
+        <div class="topic-desc">Narratives of prophets, parables, and Qur'anic accounts retold with insight.</div>
+        <span class="topic-count" id="count-Stories">0 articles</span>
+      </div>
+
+      <div class="topic-card" data-cat="Lessons" onclick="selectTopic('Lessons')">
+        <div class="topic-icon-wrap">🌿</div>
+        <div class="topic-name">Lessons</div>
+        <div class="topic-desc">Practical spiritual guidance and timeless lessons drawn from the Qur'an.</div>
+        <span class="topic-count" id="count-Lessons">0 articles</span>
+      </div>
+
+    </div>
+
+    <div class="topics-reset">
+      <button class="btn-reset-topic hidden" id="reset-topic-btn" onclick="selectTopic('All')">
+        ✕ Clear filter &nbsp;·&nbsp; Show all articles
+      </button>
+    </div>
+  </section>
+
+
+
+  <!-- FEATURED ARTICLES -->
+  <div class="section">
+    <h2 class="section-title">Featured</h2>
+    <p class="section-subtitle">Editor's picks — deeply researched, beautifully written.</p>
+    <div class="section-divider"></div>
+    <div class="featured-grid" id="featured-grid">
+      <div class="article-card" style="grid-column:span 2">
+        <div class="skeleton" style="height:260px"></div>
+        <div class="card-body">
+          <div class="skeleton" style="height:14px;width:80px;margin-bottom:10px"></div>
+          <div class="skeleton" style="height:22px;margin-bottom:8px"></div>
+          <div class="skeleton" style="height:14px;width:60%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ══ SPIRITUAL SHORTS ══ -->
+  <section class="shorts-section" id="shorts">
+    <div class="shorts-header">
+      <div class="shorts-header-left">
+        <h2>⚡ Spiritual Bites</h2>
+        <p>Quick reflections and profound verses to inspire your day.</p>
+      </div>
+      <div class="shorts-nav">
+        <button class="btn-short-nav" onclick="scrollShorts(-1)" aria-label="Previous">←</button>
+        <button class="btn-short-nav" onclick="scrollShorts(1)" aria-label="Next">→</button>
+      </div>
+    </div>
+
+    <div class="shorts-scroll-wrapper" id="shorts-wrapper">
+      <div class="shorts-track" id="shorts-track">
+        <!-- Shorts injected via JS -->
+        <div class="empty-state" style="width: 100%; color: var(--text-muted);">
+          <p>Loading shorts...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- MEET OUR WRITERS -->
+  <section class="writers-home-section" id="writers">
+    <div class="writers-header">
+      <div class="writers-header-left">
+        <h2>✍️ Meet Our Writers</h2>
+        <p>Scholars, students, and thinkers sharing reflections.</p>
+      </div>
+      <div class="writers-nav">
+        <button class="btn-short-nav" onclick="scrollWriters(-1)" aria-label="Previous">←</button>
+        <button class="btn-short-nav" onclick="scrollWriters(1)" aria-label="Next">→</button>
+      </div>
+    </div>
+
+    <div class="shorts-scroll-wrapper" id="writers-wrapper" style="padding-top: 0;">
+      <div class="writers-track" id="writers-track">
+        <div class="empty-state" style="width: 100%; color: var(--text-muted);">
+          <p>Loading writers...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL ARTICLES -->
+  <div class="section" id="articles">
+    <h2 class="section-title" id="articles-heading">All Articles</h2>
+    <p class="section-subtitle" id="articles-subtitle">Browse all writings by category or search above.</p>
+    <div class="section-divider"></div>
+
+    <!-- Active topic filter bar -->
+    <div class="topic-active-bar" id="topic-active-bar">
+      <span>Showing articles in: <strong id="active-topic-label"></strong></span>
+      <button class="topic-clear-btn" onclick="selectTopic('All')">✕ Clear</button>
+    </div>
+
+    <!-- Quick-filter pills (secondary, synced with topic cards above) -->
+    <div class="categories" id="categories">
+      <button class="pill active" data-cat="All">All</button>
+      <button class="pill" data-cat="Tafsir">📖 Tafsir</button>
+      <button class="pill" data-cat="Reflection">💭 Reflection</button>
+      <button class="pill" data-cat="Stories">📜 Stories</button>
+      <button class="pill" data-cat="Lessons">🌿 Lessons</button>
+    </div>
+
+    <div class="articles-grid" id="articles-grid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">☽ Noor Al-Quran</div>
+        <p>A premium Islamic knowledge platform offering calm, scholarly reflections on the Qur'an in the English
+          language.</p>
+      </div>
+      <div>
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="#">Tafsir</a></li>
+          <li><a href="#">Reflection</a></li>
+          <li><a href="#">Stories</a></li>
+          <li><a href="#">Lessons</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="pages/admin.html">Admin Panel</a></li>
+          <li><a href="#articles">All Articles</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Noor Al-Quran. Knowledge for the sake of Allah.</p>
+    </div>
+  </footer>
+
+  <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- STORY OVERLAY -->
+  <div id="story-overlay" class="story-overlay hidden">
+    <div class="story-progress-container" id="story-progress-container">
+      <!-- Progress bars injected via JS -->
+    </div>
+    <div class="story-header">
+      <div class="story-brand">⚡ Spiritual Bites</div>
+      <button class="story-close" onclick="closeStory()" aria-label="Close story">✕</button>
+    </div>
+    
+    <div class="story-content-wrapper" id="story-content-wrapper">
+      <!-- Content injected via JS -->
+    </div>
+
+    <!-- Tap zones -->
+    <div class="story-tap-zone story-tap-left" onclick="prevStory()"></div>
+    <div class="story-tap-zone story-tap-right" onclick="nextStory()"></div>
+  </div>
+</body>
+
+</html>

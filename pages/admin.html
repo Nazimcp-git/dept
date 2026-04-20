@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — Noor Al-Quran</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="../js/pwa.js"></script>
+  <style>
+    .stat-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 2rem;display:flex;flex-direction:column;gap:.3rem; }
+    .stat-card .stat-num { font-family:var(--font-serif);font-size:2rem;font-weight:700;color:var(--green); }
+    [data-theme="dark"] .stat-card .stat-num { color:var(--gold); }
+    .stat-card .stat-label { color:var(--text-muted);font-size:.85rem; }
+    .stats-row { display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap; }
+    .stats-row .stat-card { flex:1;min-width:120px; }
+    .table-wrapper { overflow-x:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius); }
+    .topbar-actions { display:flex;gap:.7rem;align-items:center;flex-wrap:wrap; }
+    .topbar-actions input { padding:.6rem 1rem;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:.9rem;outline:none;width:200px; }
+    .f-row { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+    @media(max-width:600px) { .f-row{grid-template-columns:1fr;} }
+    .checkbox-row { display:flex;align-items:center;gap:.6rem;margin-top:.5rem; }
+    .checkbox-row input[type="checkbox"] { width:18px;height:18px;accent-color:var(--green); }
+    .content-hint { font-size:.78rem;color:var(--text-muted);margin-top:.3rem; }
+    code { font-size:.72rem;background:rgba(27,67,50,.06);padding:.2rem .4rem;border-radius:4px;display:block;margin-top:.4rem;word-break:break-all; }
+  </style>
+</head>
+<body>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- ── LOGIN SCREEN ── -->
+  <div class="admin-login" id="login-screen">
+    <div class="login-card">
+      <h2>☽ Admin Panel</h2>
+      <p>Sign in to manage Noor Al-Quran.</p>
+      <div id="login-error" class="alert alert-error" style="display:none"></div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="admin@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn-primary btn-full" id="login-btn" onclick="handleLogin()">Sign In</button>
+      <p style="margin-top:1rem;font-size:.82rem;color:var(--text-muted);text-align:center">
+        <a href="../index.html" style="color:var(--green)">← Back to Blog</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── ADMIN PANEL ── -->
+  <div class="admin-panel" id="admin-panel">
+
+    <div class="admin-header">
+      <h1>☽ Noor Al-Quran — Admin</h1>
+      <div style="display:flex;gap:1rem;align-items:center">
+        <span id="admin-user" style="font-size:.88rem;opacity:.8"></span>
+        <a href="../index.html" style="color:rgba(255,255,255,.7);font-size:.85rem;text-decoration:none">View Blog</a>
+        <button class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,.3);padding:.4rem 1rem;font-size:.85rem" onclick="handleSignOut()">Sign Out</button>
+        <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card"><span class="stat-num" id="article-count">0</span><span class="stat-label">Articles</span></div>
+        <div class="stat-card"><span class="stat-num" id="featured-count">0</span><span class="stat-label">Featured</span></div>
+        <div class="stat-card"><span class="stat-num" id="writer-count">0</span><span class="stat-label">Writers</span></div>
+      </div>
+
+      <!-- ADMIN TABS -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" id="admin-tab-articles" onclick="switchAdminTab('articles')">📄 Articles</button>
+        <button class="admin-tab" id="admin-tab-writers" onclick="switchAdminTab('writers')">✍️ Writers</button>
+        <button class="admin-tab" id="admin-tab-shorts" onclick="switchAdminTab('shorts')">⚡ Shorts</button>
+      </div>
+
+      <!-- ── ARTICLES TAB ── -->
+      <div class="admin-tab-panel active" id="panel-articles">
+        <div class="admin-topbar">
+          <h2>All Articles</h2>
+          <div class="topbar-actions">
+            <input type="text" id="admin-search" placeholder="Search articles…"/>
+            <button class="btn-secondary" onclick="runSeed()">Seed Sample Data</button>
+            <button class="btn-primary" onclick="openAddArticle()">+ New Article</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="articles-table">
+            <thead>
+              <tr>
+                <th>Title</th><th>Category</th><th>Date</th><th>Likes</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="articles-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── WRITERS TAB ── -->
+      <div class="admin-tab-panel" id="panel-writers">
+        <div class="admin-topbar">
+          <h2>Writer Profiles</h2>
+          <div class="topbar-actions">
+            <input type="text" id="writer-search" placeholder="Search writers…"/>
+            <button class="btn-primary" onclick="openAddWriter()">+ New Writer</button>
+          </div>
+        </div>
+        <div class="writers-grid" id="writers-grid">
+          <div class="empty-state"><div class="icon">✍️</div><p>Loading…</p></div>
+        </div>
+      </div>
+
+      <!-- ── SHORTS TAB ── -->
+      <div class="admin-tab-panel" id="panel-shorts">
+        <div class="admin-topbar">
+          <h2>Spiritual Shorts</h2>
+          <div class="topbar-actions">
+            <button class="btn-primary" onclick="openAddShort()">+ New Short</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="articles-table">
+            <thead>
+              <tr>
+                <th>Content</th><th>Source</th><th>Theme</th><th>Date</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="shorts-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ ARTICLE MODAL ══ -->
+  <div class="modal-overlay hidden" id="article-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">New Article</h3>
+        <button class="btn-icon" onclick="closeArticleModal()">✕</button>
+      </div>
+      <form id="article-form" onsubmit="event.preventDefault();saveArticle();">
+        <div class="form-group">
+          <label for="f-title">Title *</label>
+          <input type="text" id="f-title" placeholder="Article title…" required/>
+        </div>
+        <div class="f-row">
+          <div class="form-group">
+            <label for="f-category">Category *</label>
+            <select id="f-category">
+              <option value="Tafsir">Tafsir</option>
+              <option value="Reflection">Reflection</option>
+              <option value="Stories">Stories</option>
+              <option value="Lessons">Lessons</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-writer">Writer Profile</label>
+            <select id="f-writer">
+              <option value="">— No writer assigned —</option>
+            </select>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="form-group">
+            <label for="f-author">Author Name (display)</label>
+            <input type="text" id="f-author" placeholder="Editorial Team"/>
+          </div>
+          <div class="form-group">
+            <label for="f-image">Featured Image URL</label>
+            <input type="url" id="f-image" placeholder="https://images.unsplash.com/…"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="f-tags">Tags (comma-separated)</label>
+          <input type="text" id="f-tags" placeholder="quran, tafsir, reflection"/>
+        </div>
+        <div class="form-group">
+          <label for="f-content">Content (HTML) *</label>
+          <textarea id="f-content" rows="10" placeholder="&lt;p&gt;Your article…&lt;/p&gt;" required></textarea>
+          <p class="content-hint">Use HTML. For Qur'an verses:<code>&lt;blockquote class="verse"&gt;&lt;p class="verse-arabic"&gt;…&lt;/p&gt;&lt;p class="verse-translation"&gt;…&lt;/p&gt;&lt;button class="copy-verse-btn" onclick="copyVerse(this)"&gt;Copy Verse&lt;/button&gt;&lt;/blockquote&gt;</code></p>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="f-featured"/>
+          <label for="f-featured">Mark as Featured</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeArticleModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="save-article-btn">Save Article</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══ WRITER MODAL ══ -->
+  <div class="modal-overlay hidden" id="writer-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="writer-modal-title">New Writer</h3>
+        <button class="btn-icon" onclick="closeWriterModal()">✕</button>
+      </div>
+      <form id="writer-form" onsubmit="event.preventDefault();saveWriter();">
+        <div class="f-row">
+          <div class="form-group">
+            <label for="wf-name">Full Name *</label>
+            <input type="text" id="wf-name" placeholder="e.g. Dr. Ahmad Ibrahim" required/>
+          </div>
+          <div class="form-group">
+            <label for="wf-title">Title / Role</label>
+            <input type="text" id="wf-title" placeholder="e.g. Senior Editor"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="wf-bio">Biography</label>
+          <textarea id="wf-bio" rows="4" placeholder="A short bio about this writer…"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="wf-avatar">Avatar Image URL</label>
+          <input type="url" id="wf-avatar" placeholder="https://…"/>
+        </div>
+        <div class="f-row">
+          <div class="form-group">
+            <label for="wf-twitter">Twitter / X URL</label>
+            <input type="url" id="wf-twitter" placeholder="https://twitter.com/…"/>
+          </div>
+          <div class="form-group">
+            <label for="wf-website">Website URL</label>
+            <input type="url" id="wf-website" placeholder="https://…"/>
+          </div>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="wf-featured"/>
+          <label for="wf-featured">Featured writer</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeWriterModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="save-writer-btn">Save Writer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══ SHORT MODAL ══ -->
+  <div class="modal-overlay hidden" id="short-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="short-modal-title">New Short</h3>
+        <button class="btn-icon" onclick="closeShortModal()">✕</button>
+      </div>
+      <form id="short-form" onsubmit="event.preventDefault();saveShort();">
+        <div class="form-group">
+          <label for="sf-arabic">Arabic Text (Optional)</label>
+          <textarea id="sf-arabic" rows="3" placeholder="بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" style="font-size:1.5rem; text-align:right;" dir="rtl"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="sf-content">Content / Translation *</label>
+          <textarea id="sf-content" rows="4" placeholder="The English translation or short reflection..." required></textarea>
+        </div>
+        <div class="f-row">
+          <div class="form-group">
+            <label for="sf-source">Source / Reference</label>
+            <input type="text" id="sf-source" placeholder="e.g. Surah Al-Baqarah 2:286"/>
+          </div>
+          <div class="form-group">
+            <label for="sf-theme">Color Theme</label>
+            <select id="sf-theme">
+              <option value="emerald">Emerald</option>
+              <option value="gold">Gold</option>
+              <option value="night">Night</option>
+              <option value="sand">Sand</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeShortModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="save-short-btn">Save Short</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/firebase.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    // ── Theme ──────────────────────────────────────────
+    const root = document.documentElement;
+    const saved = localStorage.getItem('theme') || 'light';
+    root.setAttribute('data-theme', saved);
+    document.addEventListener('DOMContentLoaded', () => {
+      const tb = document.getElementById('theme-toggle');
+      if (tb) {
+        tb.textContent = saved === 'dark' ? '☀️' : '🌙';
+        tb.addEventListener('click', () => {
+          const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          root.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          tb.textContent = next === 'dark' ? '☀️' : '🌙';
+        });
+      }
+    });
+
+    // ── Auth State → Show Panel ────────────────────────
+    initAuth(
+      user => {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('admin-user').textContent = user.email;
+        loadAdminArticles();
+        loadAdminWriters();
+        loadAdminShorts();
+      },
+      () => {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('admin-panel').style.display = 'none';
+      }
+    );
+
+    // ── Login ──────────────────────────────────────────
+    async function handleLogin() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errEl = document.getElementById('login-error');
+      const btn = document.getElementById('login-btn');
+      errEl.style.display = 'none';
+      btn.textContent = 'Signing in…'; btn.disabled = true;
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (e) {
+        errEl.textContent = e.message; errEl.style.display = 'block';
+      } finally {
+        btn.textContent = 'Sign In'; btn.disabled = false;
+      }
+    }
+    window.handleLogin = handleLogin;
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') handleLogin();
+    });
+
+    async function handleSignOut() { await auth.signOut(); }
+    window.handleSignOut = handleSignOut;
+  </script>
+</body>
+</html>

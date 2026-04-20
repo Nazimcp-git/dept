@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In — Noor Al-Quran</title>
+  <meta name="description" content="Sign in or create your Noor Al-Quran account."/>
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="../js/pwa.js"></script>
+</head>
+<body class="auth-page-body">
+
+  <div class="auth-page">
+    <!-- LEFT: Branding Panel -->
+    <div class="auth-brand-panel">
+      <div class="auth-brand-content">
+        <a href="../index.html" class="auth-brand-logo">☽ Noor Al-Quran</a>
+        <div class="auth-brand-quote">
+          <p>"Indeed, with hardship comes ease."</p>
+          <span>— Qur'an 94:6</span>
+        </div>
+        <div class="auth-brand-decoration">
+          <div class="auth-glow"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Form Panel -->
+    <div class="auth-form-panel">
+      <div class="auth-form-container">
+
+        <!-- Mobile logo (shown only on small screens) -->
+        <a href="../index.html" class="auth-mobile-logo">☽ Noor Al-Quran</a>
+
+        <!-- ═══ SIGN IN VIEW ═══ -->
+        <div class="auth-view active" id="view-login">
+          <div class="auth-view-header">
+            <h1>Welcome back</h1>
+            <p>Sign in to continue your journey of reflection.</p>
+          </div>
+
+          <div class="auth-error" id="login-error"></div>
+
+          <form onsubmit="handleSignIn(event)" class="auth-form">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" required/>
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required/>
+            </div>
+            <button type="submit" class="btn-primary btn-full" id="btn-signin">Sign In</button>
+          </form>
+
+          <div class="auth-footer-link" style="margin-top: 1rem;">
+            <p><a href="#" onclick="switchView('forgot'); return false;">Forgot your password?</a></p>
+          </div>
+          <div class="auth-footer-link" style="margin-top: 0.5rem;">
+            <p>Don't have an account? <a href="#" onclick="switchView('register'); return false;">Create one</a></p>
+          </div>
+        </div>
+
+        <!-- ═══ REGISTER VIEW ═══ -->
+        <div class="auth-view" id="view-register">
+          <div class="auth-view-header">
+            <h1>Create your account</h1>
+            <p>Join our community of learners and seekers.</p>
+          </div>
+
+          <div class="auth-error" id="register-error"></div>
+
+          <form onsubmit="handleRegister(event)" class="auth-form">
+            <div class="form-group">
+              <label for="reg-name">Display Name</label>
+              <input type="text" id="reg-name" placeholder="Your name" autocomplete="name" required/>
+            </div>
+            <div class="form-group">
+              <label for="reg-email">Email</label>
+              <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email" required/>
+            </div>
+            <div class="form-group">
+              <label for="reg-password">Password <span class="label-hint">(min 6 characters)</span></label>
+              <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password" minlength="6" required/>
+            </div>
+            <button type="submit" class="btn-primary btn-full" id="btn-register">Create Account</button>
+          </form>
+
+          <div class="auth-footer-link">
+            <p>Already have an account? <a href="#" onclick="switchView('login'); return false;">Sign in</a></p>
+          </div>
+        </div>
+
+        <!-- ═══ VERIFICATION SENT VIEW ═══ -->
+        <div class="auth-view" id="view-verify">
+          <div class="auth-verify-content">
+            <div class="verify-icon">✉️</div>
+            <h1>Check your email</h1>
+            <p class="verify-email-target">We've sent a verification link to<br><strong id="verify-email-display">your email</strong></p>
+
+            <div class="verify-steps">
+              <div class="verify-step">
+                <div class="step-number">1</div>
+                <div class="step-text">Open your email inbox</div>
+              </div>
+              <div class="verify-step">
+                <div class="step-number">2</div>
+                <div class="step-text">Click the verification link from Noor Al-Quran</div>
+              </div>
+              <div class="verify-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Come back here and sign in</div>
+              </div>
+            </div>
+
+            <div class="verify-actions">
+              <button class="btn-primary btn-full" onclick="switchView('login')">Go to Sign In</button>
+              <button class="btn-secondary btn-full" id="btn-resend" onclick="resendVerification()">Resend Verification Email</button>
+            </div>
+
+            <p class="verify-hint">Didn't receive the email? Check your spam folder or click resend above.</p>
+          </div>
+        </div>
+
+        <!-- ═══ UNVERIFIED WARNING VIEW ═══ -->
+        <div class="auth-view" id="view-unverified">
+          <div class="auth-verify-content">
+            <div class="verify-icon">🔒</div>
+            <h1>Email not verified</h1>
+            <p class="verify-email-target">Your email <strong id="unverified-email-display">—</strong> hasn't been verified yet.</p>
+
+            <div class="verify-steps">
+              <div class="verify-step">
+                <div class="step-number">1</div>
+                <div class="step-text">Check your email for the verification link</div>
+              </div>
+              <div class="verify-step">
+                <div class="step-number">2</div>
+                <div class="step-text">Click the link to verify your account</div>
+              </div>
+              <div class="verify-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Come back and sign in again</div>
+              </div>
+            </div>
+
+            <div class="verify-actions">
+              <button class="btn-primary btn-full" onclick="switchView('login')">Try Signing In Again</button>
+              <button class="btn-secondary btn-full" id="btn-resend-unverified" onclick="resendVerificationForUnverified()">Resend Verification Email</button>
+            </div>
+
+            <p class="verify-hint">Didn't receive the email? Check your spam folder or click resend above.</p>
+          </div>
+        </div>
+
+        <!-- ═══ FORGOT PASSWORD VIEW ═══ -->
+        <div class="auth-view" id="view-forgot">
+          <div class="auth-view-header">
+            <h1>Reset your password</h1>
+            <p>Enter your email and we'll send you a link to reset your password.</p>
+          </div>
+
+          <div class="auth-error" id="forgot-error"></div>
+
+          <form onsubmit="handleForgotPassword(event)" class="auth-form">
+            <div class="form-group">
+              <label for="forgot-email">Email</label>
+              <input type="email" id="forgot-email" placeholder="your@email.com" autocomplete="email" required/>
+            </div>
+            <button type="submit" class="btn-primary btn-full" id="btn-forgot">Send Reset Link</button>
+          </form>
+
+          <div class="auth-footer-link">
+            <p>Remember your password? <a href="#" onclick="switchView('login'); return false;">Sign in</a></p>
+          </div>
+        </div>
+
+        <!-- ═══ PASSWORD RESET SENT VIEW ═══ -->
+        <div class="auth-view" id="view-reset-sent">
+          <div class="auth-verify-content">
+            <div class="verify-icon">📧</div>
+            <h1>Reset link sent</h1>
+            <p class="verify-email-target">We've sent a password reset link to<br><strong id="reset-email-display">your email</strong></p>
+
+            <div class="verify-steps">
+              <div class="verify-step">
+                <div class="step-number">1</div>
+                <div class="step-text">Open your email inbox</div>
+              </div>
+              <div class="verify-step">
+                <div class="step-number">2</div>
+                <div class="step-text">Click the password reset link</div>
+              </div>
+              <div class="verify-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Create a new password and sign in</div>
+              </div>
+            </div>
+
+            <div class="verify-actions">
+              <button class="btn-primary btn-full" onclick="switchView('login')">Go to Sign In</button>
+              <button class="btn-secondary btn-full" id="btn-resend-reset" onclick="handleForgotPasswordResend()">Resend Reset Email</button>
+            </div>
+
+            <p class="verify-hint">Didn't receive the email? Check your spam folder or click resend above.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/firebase.js"></script>
+  <script>
+    // ── Theme ──────────────────────────────────────────
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    root.setAttribute('data-theme', savedTheme);
+
+    // ── View Switching ─────────────────────────────────
+    function switchView(view) {
+      document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
+      const el = document.getElementById('view-' + view);
+      if (el) el.classList.add('active');
+      // Update page title
+      const titles = { login: 'Sign In', register: 'Create Account', verify: 'Verify Email', unverified: 'Verify Email', forgot: 'Forgot Password', 'reset-sent': 'Reset Link Sent' };
+      document.title = (titles[view] || 'Auth') + ' — Noor Al-Quran';
+    }
+    window.switchView = switchView;
+
+    // ── Check URL params ──────────────────────────────
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialView = urlParams.get('view');
+    if (initialView === 'register') switchView('register');
+
+    // ── Friendly Error Messages ───────────────────────
+    function friendlyError(code) {
+      const map = {
+        'auth/user-not-found': 'No account found with this email.',
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/email-already-in-use': 'This email is already registered.',
+        'auth/invalid-email': 'Please enter a valid email address.',
+        'auth/weak-password': 'Password must be at least 6 characters.',
+        'auth/too-many-requests': 'Too many attempts. Please try again later.',
+        'auth/invalid-credential': 'Invalid email or password.'
+      };
+      return map[code] || 'Something went wrong. Please try again.';
+    }
+
+    // ── Track last registered email for resend ────────
+    let lastRegisteredEmail = '';
+    let lastRegisteredPassword = '';
+
+    // ── Sign In ───────────────────────────────────────
+    async function handleSignIn(e) {
+      if (e) e.preventDefault();
+      const email = document.getElementById('login-email')?.value.trim();
+      const password = document.getElementById('login-password')?.value;
+      const errEl = document.getElementById('login-error');
+      const btn = document.getElementById('btn-signin');
+      errEl.style.display = 'none';
+
+      if (!email || !password) {
+        errEl.textContent = 'Please fill in all fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Signing in…';
+      btn.disabled = true;
+
+      try {
+        const cred = await auth.signInWithEmailAndPassword(email, password);
+
+        // Check verification (only for NEW users who signed up with verification)
+        if (!cred.user.emailVerified) {
+          // Check if user was created before we added verification
+          const userDoc = await db.collection('users').doc(cred.user.uid).get();
+          const userData = userDoc.exists ? userDoc.data() : null;
+          const hasVerificationRequired = userData && userData.verificationRequired === true;
+
+          if (hasVerificationRequired) {
+            // User signed up with the new system — must verify
+            lastRegisteredEmail = email;
+            lastRegisteredPassword = password;
+            document.getElementById('unverified-email-display').textContent = email;
+            await auth.signOut();
+            switchView('unverified');
+            return;
+          }
+          // Otherwise, old user — let them through
+        }
+
+        // Redirect to homepage
+        window.location.href = '../index.html';
+      } catch (e) {
+        errEl.textContent = friendlyError(e.code);
+        errEl.style.display = 'block';
+      } finally {
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
+      }
+    }
+    window.handleSignIn = handleSignIn;
+
+    // ── Register ──────────────────────────────────────
+    async function handleRegister(e) {
+      if (e) e.preventDefault();
+      const name = document.getElementById('reg-name')?.value.trim();
+      const email = document.getElementById('reg-email')?.value.trim();
+      const password = document.getElementById('reg-password')?.value;
+      const errEl = document.getElementById('register-error');
+      const btn = document.getElementById('btn-register');
+      errEl.style.display = 'none';
+
+      if (!name || !email || !password) {
+        errEl.textContent = 'Please fill in all fields.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (password.length < 6) {
+        errEl.textContent = 'Password must be at least 6 characters.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Creating account…';
+      btn.disabled = true;
+
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        await cred.user.updateProfile({ displayName: name });
+
+        // Send verification email
+        await cred.user.sendEmailVerification();
+
+        // Create user document with verificationRequired flag
+        await db.collection('users').doc(cred.user.uid).set({
+          uid: cred.user.uid,
+          displayName: name,
+          email: email,
+          role: 'reader',
+          verificationRequired: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Store for resend
+        lastRegisteredEmail = email;
+        lastRegisteredPassword = password;
+
+        // Sign out and show verification view
+        await auth.signOut();
+        document.getElementById('verify-email-display').textContent = email;
+        switchView('verify');
+
+      } catch (e) {
+        errEl.textContent = friendlyError(e.code);
+        errEl.style.display = 'block';
+      } finally {
+        btn.textContent = 'Create Account';
+        btn.disabled = false;
+      }
+    }
+    window.handleRegister = handleRegister;
+
+    // ── Resend Verification ───────────────────────────
+    async function resendVerification() {
+      const btn = document.getElementById('btn-resend');
+      if (!lastRegisteredEmail || !lastRegisteredPassword) {
+        btn.textContent = 'Please sign up again';
+        return;
+      }
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+      try {
+        const cred = await auth.signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword);
+        await cred.user.sendEmailVerification();
+        await auth.signOut();
+        btn.textContent = '✓ Email sent!';
+        setTimeout(() => { btn.textContent = 'Resend Verification Email'; btn.disabled = false; }, 3000);
+      } catch (e) {
+        btn.textContent = 'Failed to resend. Try again.';
+        btn.disabled = false;
+      }
+    }
+    window.resendVerification = resendVerification;
+
+    async function resendVerificationForUnverified() {
+      const btn = document.getElementById('btn-resend-unverified');
+      if (!lastRegisteredEmail || !lastRegisteredPassword) {
+        btn.textContent = 'Please sign in first';
+        return;
+      }
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+      try {
+        const cred = await auth.signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword);
+        await cred.user.sendEmailVerification();
+        await auth.signOut();
+        btn.textContent = '✓ Email sent!';
+        setTimeout(() => { btn.textContent = 'Resend Verification Email'; btn.disabled = false; }, 3000);
+      } catch (e) {
+        btn.textContent = 'Failed to resend. Try again.';
+        btn.disabled = false;
+      }
+    }
+    window.resendVerificationForUnverified = resendVerificationForUnverified;
+
+    // ── Forgot Password ───────────────────────────────
+    let lastForgotEmail = '';
+
+    async function handleForgotPassword(e) {
+      if (e) e.preventDefault();
+      const email = document.getElementById('forgot-email')?.value.trim();
+      const errEl = document.getElementById('forgot-error');
+      const btn = document.getElementById('btn-forgot');
+      errEl.style.display = 'none';
+
+      if (!email) {
+        errEl.textContent = 'Please enter your email address.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      try {
+        await auth.sendPasswordResetEmail(email);
+        lastForgotEmail = email;
+        document.getElementById('reset-email-display').textContent = email;
+        switchView('reset-sent');
+      } catch (e) {
+        errEl.textContent = friendlyError(e.code);
+        errEl.style.display = 'block';
+      } finally {
+        btn.textContent = 'Send Reset Link';
+        btn.disabled = false;
+      }
+    }
+    window.handleForgotPassword = handleForgotPassword;
+
+    async function handleForgotPasswordResend() {
+      const btn = document.getElementById('btn-resend-reset');
+      if (!lastForgotEmail) {
+        switchView('forgot');
+        return;
+      }
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+      try {
+        await auth.sendPasswordResetEmail(lastForgotEmail);
+        btn.textContent = '✓ Email sent!';
+        setTimeout(() => { btn.textContent = 'Resend Reset Email'; btn.disabled = false; }, 3000);
+      } catch (e) {
+        btn.textContent = 'Failed to resend. Try again.';
+        btn.disabled = false;
+      }
+    }
+    window.handleForgotPasswordResend = handleForgotPasswordResend;
+
+    // ── If user is already logged in, redirect ────────
+    auth.onAuthStateChanged(user => {
+      if (user && user.emailVerified) {
+        // Already logged in and verified — go home
+        // (Don't redirect if we're showing verify/unverified views)
+        const activeView = document.querySelector('.auth-view.active');
+        if (activeView && (activeView.id === 'view-login' || activeView.id === 'view-register')) {
+          window.location.href = '../index.html';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

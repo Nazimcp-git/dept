@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="page-title">Writer Profile — Noor Al-Quran</title>
+  <meta name="description" id="page-desc" content="Writer profile on Noor Al-Quran."/>
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="../js/pwa.js"></script>
+</head>
+<body>
+
+  <div class="toast" id="toast"></div>
+
+  <nav>
+    <a href="../index.html" class="nav-brand">☽ Noor Al-Quran</a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../index.html#articles">Articles</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu" onclick="document.querySelector('nav').classList.toggle('menu-open')">☰</button>
+      <!-- Auth UI injected by auth.js -->
+    </div>
+  </nav>
+
+  <!-- PROFILE HERO -->
+  <div class="profile-hero" id="profile-hero">
+    <div class="profile-avatar" id="profile-avatar">…</div>
+    <div class="profile-name" id="profile-name">Loading…</div>
+    <div class="profile-title" id="profile-title"></div>
+    <div class="profile-bio" id="profile-bio"></div>
+    <div class="profile-social" id="profile-social"></div>
+    <button class="btn-follow" id="follow-btn" onclick="handleFollow()" style="display:none">Follow</button>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="profile-stats">
+    <div class="profile-stat">
+      <span class="num" id="stat-articles">0</span>
+      <span class="lbl">Articles</span>
+    </div>
+    <div class="profile-stat">
+      <span class="num" id="stat-followers">0</span>
+      <span class="lbl">Followers</span>
+    </div>
+    <div class="profile-stat">
+      <span class="num" id="stat-likes">0</span>
+      <span class="lbl">Total Likes</span>
+    </div>
+  </div>
+
+  <!-- WRITER'S ARTICLES -->
+  <div class="section">
+    <h2 class="section-title" id="articles-heading">Articles</h2>
+    <div class="section-divider"></div>
+    <div class="articles-grid" id="writer-articles-grid">
+      <div class="empty-state"><div class="icon">📜</div><p>Loading articles…</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand">☽ Noor Al-Quran</div><p>Scholarly reflections on the Qur'an.</p></div>
+      <div><h4>Navigate</h4><ul><li><a href="../index.html">Home</a></li><li><a href="../index.html#articles">Articles</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 Noor Al-Quran.</p></div>
+  </footer>
+
+  <script src="../js/firebase.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/profile.js"></script>
+</body>
+</html>

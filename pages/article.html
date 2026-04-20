@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="page-title">Article — Noor Al-Quran</title>
+  <meta name="description" id="page-desc" content="Read this article on Noor Al-Quran."/>
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="../js/pwa.js"></script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+  <div class="toast" id="toast"></div>
+
+  <nav>
+    <a href="../index.html" class="nav-brand">☽ Noor Al-Quran</a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../index.html#articles">Articles</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu" onclick="document.querySelector('nav').classList.toggle('menu-open')">☰</button>
+      <!-- Auth UI injected by auth.js -->
+    </div>
+  </nav>
+
+  <!-- ARTICLE HERO -->
+  <div class="article-hero" id="article-hero">
+    <img id="hero-img" src="" alt="Article hero image" loading="eager"/>
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <div class="card-category" id="article-category"></div>
+      <h1 id="article-title">Loading…</h1>
+    </div>
+  </div>
+
+  <!-- META BAR -->
+  <div class="article-meta-bar">
+    <a id="article-author-link" href="#" style="color:var(--green);text-decoration:none;font-weight:500" id="article-author"></a>
+    <span>·</span>
+    <span id="article-date"></span>
+    <span>·</span>
+    <span id="article-read-time"></span>
+    <span>·</span>
+    <span id="article-likes-bar"></span>
+  </div>
+
+  <!-- ARTICLE BODY -->
+  <article class="article-body" id="article-body">
+    <div class="skeleton" style="height:18px;margin-bottom:12px"></div>
+    <div class="skeleton" style="height:18px;margin-bottom:12px;width:80%"></div>
+    <div class="skeleton" style="height:18px;margin-bottom:12px;width:90%"></div>
+  </article>
+
+  <!-- ACTIONS BAR -->
+  <div class="article-actions">
+    <button class="btn-like" id="like-btn" onclick="handleLike()">❤️ <span id="like-count">0</span> Like</button>
+    <button class="btn-like" id="bookmark-btn" onclick="handleBookmark()">🏷️ Bookmark</button>
+    <a class="btn-share" id="share-twitter" href="#" target="_blank">🐦 Twitter</a>
+    <a class="btn-share" id="share-whatsapp" href="#" target="_blank">💬 WhatsApp</a>
+    <button class="btn-share" onclick="copyLink()">🔗 Copy Link</button>
+  </div>
+
+  <!-- AUTHOR BOX -->
+  <div class="author-box" id="author-box">
+    <div class="author-avatar" id="author-avatar">A</div>
+    <div class="author-info" style="flex:1">
+      <h4 id="author-name">Author</h4>
+      <p id="author-bio-text">Contributing writer at Noor Al-Quran.</p>
+    </div>
+    <button class="btn-follow-sm" id="author-follow-btn" onclick="handleFollowWriter()" style="display:none">Follow</button>
+  </div>
+
+  <!-- COMMENTS SECTION -->
+  <div class="comments-section">
+    <h3>Discussion</h3>
+    <div class="section-divider"></div>
+
+    <!-- Auth-gated comment form (shown/hidden by JS) -->
+    <div id="comment-form-wrapper">
+      <div class="comment-auth-prompt" id="comment-auth-prompt">
+        <p>☽ Sign in to join the discussion and share your reflections.</p>
+        <button class="btn-primary" onclick="showAuthModal('login')" style="padding:0.5rem 1.2rem;font-size:0.88rem">Sign In</button>
+      </div>
+      <div class="comment-form" id="comment-form" style="display:none">
+        <textarea id="comment-input" placeholder="Share your reflection…" maxlength="1000"></textarea>
+        <div class="comment-form-footer">
+          <span style="font-size:0.78rem;color:var(--text-muted)" id="comment-char-count">0 / 1000</span>
+          <button class="btn-primary" id="comment-submit-btn" onclick="submitComment()" style="padding:0.5rem 1.2rem;font-size:0.88rem">Post Reflection</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="comment-list" id="comment-list">
+      <div class="empty-state" style="padding:2rem">
+        <div class="icon" style="font-size:2rem">💬</div>
+        <p>No comments yet. Be the first to reflect.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED ARTICLES -->
+  <div class="related-section">
+    <h2 class="section-title" style="margin-bottom:0.5rem">Related Articles</h2>
+    <div class="section-divider"></div>
+    <div class="articles-grid" id="related-grid"></div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-brand">☽ Noor Al-Quran</div><p>Scholarly reflections on the Qur'an.</p></div>
+      <div><h4>Navigate</h4><ul><li><a href="../index.html">Home</a></li><li><a href="../index.html#articles">Articles</a></li></ul></div>
+      <div><h4>Platform</h4><ul><li><a href="admin.html">Admin Panel</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 Noor Al-Quran.</p></div>
+  </footer>
+
+  <script src="../js/firebase.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/article.js"></script>
+</body>
+</html>
