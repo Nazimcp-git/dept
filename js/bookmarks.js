@@ -309,7 +309,7 @@ function gridCardHTML(art) {
     '<div class="bm-card-img-wrap">' +
       '<img class="bm-card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
       '<div class="bm-card-overlay">' +
-        '<a href="article.html?id=' + art.id + '" class="bm-read-btn">Read Article →</a>' +
+        '<a href="article?id=' + art.id + '" class="bm-read-btn">Read Article →</a>' +
       '</div>' +
       '<span class="bm-card-category">' + (art.category || 'General') + '</span>' +
       '<button class="bm-remove-btn" onclick="removeBookmark(\'' + art.id + '\')" title="Remove bookmark">' +
@@ -317,7 +317,7 @@ function gridCardHTML(art) {
       '</button>' +
     '</div>' +
     '<div class="bm-card-body">' +
-      '<a href="article.html?id=' + art.id + '" class="bm-card-title">' + art.title + '</a>' +
+      '<a href="article?id=' + art.id + '" class="bm-card-title">' + art.title + '</a>' +
       '<p class="bm-card-excerpt">' + (art.excerpt || '') + '</p>' +
       '<div class="bm-card-footer">' +
         '<div class="bm-card-meta">' +
@@ -338,12 +338,12 @@ function listCardHTML(art) {
   var saved = art.savedAt ? timeAgo(art.savedAt) : '';
 
   return '<div class="bm-list-item" id="bm-list-' + art.id + '">' +
-    '<a href="article.html?id=' + art.id + '" class="bm-list-img-wrap">' +
+    '<a href="article?id=' + art.id + '" class="bm-list-img-wrap">' +
       '<img src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
     '</a>' +
     '<div class="bm-list-content">' +
       '<span class="bm-list-category">' + (art.category || 'General') + '</span>' +
-      '<a href="article.html?id=' + art.id + '" class="bm-list-title">' + art.title + '</a>' +
+      '<a href="article?id=' + art.id + '" class="bm-list-title">' + art.title + '</a>' +
       '<p class="bm-list-excerpt">' + (art.excerpt || '') + '</p>' +
       '<div class="bm-list-footer">' +
         '<span class="bm-list-meta">✍️ ' + (art.author || 'Editorial Team') + ' · ' + rt + ' min' + (saved ? ' · Saved ' + saved : '') + '</span>' +

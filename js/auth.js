@@ -1,6 +1,6 @@
 // ==========================================================
 // auth.js — Authentication System (Page-based)
-// Redirects to /pages/auth.html for sign-in/register
+// Redirects to /pages/auth for sign-in/register
 // ==========================================================
 
 // ── Global Auth State ──────────────────────────────────
@@ -46,7 +46,7 @@ function showAuthModal(tab = 'login') {
   injectAuthPrompt();
 
   const isInPages = window.location.pathname.includes('/pages/');
-  const basePath = isInPages ? 'auth.html' : 'pages/auth.html';
+  const basePath = isInPages ? 'auth' : 'pages/auth';
   const viewParam = tab === 'register' ? '?view=register' : '';
 
   // Wire the "Sign In" button to redirect
@@ -133,7 +133,7 @@ function injectNavbarAuth() {
           <div class="d-name">${name}</div>
           <div class="d-email">${currentUser.email}</div>
         </div>
-        <a class="dropdown-item" href="${window.location.pathname.includes('/pages/') ? 'bookmarks.html' : 'pages/bookmarks.html'}">🔖 My Bookmarks</a>
+        <a class="dropdown-item" href="${window.location.pathname.includes('/pages/') ? 'bookmarks' : 'pages/bookmarks'}">🔖 My Bookmarks</a>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item danger" onclick="handleNavSignOut()">🚪 Sign Out</button>
       </div>`;

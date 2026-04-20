@@ -162,7 +162,7 @@ function cardHTML(art, featured) {
       '<img class="card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
       '<div class="card-body">' +
         '<div class="card-category">' + (art.category || 'General') + '</div>' +
-        '<a class="card-title" href="pages/article.html?id=' + art.id + '">' + art.title + '</a>' +
+        '<a class="card-title" href="pages/article?id=' + art.id + '">' + art.title + '</a>' +
         '<p class="card-excerpt">' + (art.excerpt || '') + '</p>' +
         '<div class="card-meta">' +
           '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
@@ -180,7 +180,7 @@ function cardHTML(art, featured) {
     '<img class="card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
     '<div class="card-body">' +
       '<div class="card-category">' + (art.category || 'General') + '</div>' +
-      '<a class="card-title" href="pages/article.html?id=' + art.id + '">' + art.title + '</a>' +
+      '<a class="card-title" href="pages/article?id=' + art.id + '">' + art.title + '</a>' +
       '<p class="card-excerpt">' + (art.excerpt || '') + '</p>' +
       '<div class="card-meta">' +
         '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
@@ -220,7 +220,7 @@ function renderHeroCarousel(articles) {
           <div class="carousel-overlay"></div>
           <div class="carousel-content">
             <div class="carousel-category">${art.category || 'General'}</div>
-            <a href="pages/article.html?id=${art.id}" class="carousel-title">${art.title}</a>
+            <a href="pages/article?id=${art.id}" class="carousel-title">${art.title}</a>
             <p class="carousel-excerpt">${art.excerpt || ''}</p>
             
           </div>
@@ -607,7 +607,7 @@ function renderWriters() {
     const articleCount = allArticles.filter(a => a.writerId === w.id).length;
 
     return `
-    <a href="pages/profile.html?id=${w.id}" class="writer-card">
+    <a href="pages/profile?id=${w.id}" class="writer-card">
       <div class="wc-avatar">${avatarContent}</div>
       <div class="wc-name">${w.name}</div>
       <div class="wc-title">${w.title || ''}</div>

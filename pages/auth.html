@@ -19,7 +19,7 @@
     <!-- LEFT: Branding Panel -->
     <div class="auth-brand-panel">
       <div class="auth-brand-content">
-        <a href="../index.html" class="auth-brand-logo">☽ Noor Al-Quran</a>
+        <a href="../" class="auth-brand-logo">☽ Noor Al-Quran</a>
         <div class="auth-brand-quote">
           <p>"Indeed, with hardship comes ease."</p>
           <span>— Qur'an 94:6</span>
@@ -35,7 +35,7 @@
       <div class="auth-form-container">
 
         <!-- Mobile logo (shown only on small screens) -->
-        <a href="../index.html" class="auth-mobile-logo">☽ Noor Al-Quran</a>
+        <a href="../" class="auth-mobile-logo">☽ Noor Al-Quran</a>
 
         <!-- ═══ SIGN IN VIEW ═══ -->
         <div class="auth-view active" id="view-login">
@@ -297,7 +297,7 @@
         }
 
         // Redirect to homepage
-        window.location.href = '../index.html';
+        window.location.href = '../';
       } catch (e) {
         errEl.textContent = friendlyError(e.code);
         errEl.style.display = 'block';
@@ -471,7 +471,7 @@
         // (Don't redirect if we're showing verify/unverified views)
         const activeView = document.querySelector('.auth-view.active');
         if (activeView && (activeView.id === 'view-login' || activeView.id === 'view-register')) {
-          window.location.href = '../index.html';
+          window.location.href = '../';
         }
       }
     });

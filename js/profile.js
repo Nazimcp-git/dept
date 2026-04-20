@@ -1,6 +1,6 @@
 // ==========================================================
 // profile.js — Writer Profile Page Logic
-// URL: profile.html?id=<writerId>
+// URL: profile?id=<writerId>
 // ==========================================================
 
 // ── Theme ──────────────────────────────────────────────
@@ -48,7 +48,7 @@ function articleCard(art) {
     <img class="card-img" src="${imgSrc}" alt="${art.title}" loading="lazy">
     <div class="card-body">
       <div class="card-category">${art.category || ''}</div>
-      <a class="card-title" href="article.html?id=${art.id}">${art.title}</a>
+      <a class="card-title" href="article?id=${art.id}">${art.title}</a>
       <p class="card-excerpt">${art.excerpt || ''}</p>
       <div class="card-meta">
         <span>${formatDate(art.createdAt)} · ${rt} min read</span>

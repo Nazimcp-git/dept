@@ -174,7 +174,7 @@ function miniCard(art) {
     <img class="card-img" src="${imgSrc}" alt="${art.title}" loading="lazy">
     <div class="card-body">
       <div class="card-category">${art.category || ''}</div>
-      <a class="card-title" href="article.html?id=${art.id}">${art.title}</a>
+      <a class="card-title" href="article?id=${art.id}">${art.title}</a>
       <p class="card-excerpt">${art.excerpt || ''}</p>
       <div class="card-meta"><span>${readingTime(art.content)} min read</span></div>
     </div>
@@ -215,7 +215,7 @@ function renderArticle(art) {
   // Author link
   const authorLink = document.getElementById('article-author-link');
   authorLink.textContent = '✍️ ' + (art.author || 'Editorial Team');
-  if (art.writerId) authorLink.href = `profile.html?id=${art.writerId}`;
+  if (art.writerId) authorLink.href = `profile?id=${art.writerId}`;
 
   // Like state
   if (localStorage.getItem('liked_' + art.id)) document.getElementById('like-btn').classList.add('liked');

@@ -229,7 +229,7 @@ function renderWriterCards(writers) {
       <div class="wc-title">${w.title || ''}</div>
       <div class="wc-stats">📝 ${w.articleCount || 0} articles · 👥 ${w.followerCount || 0} followers</div>
       <div class="wc-actions">
-        <a class="btn-edit" href="profile.html?id=${w.id}" target="_blank" style="text-decoration:none;font-size:0.82rem">View</a>
+        <a class="btn-edit" href="profile?id=${w.id}" target="_blank" style="text-decoration:none;font-size:0.82rem">View</a>
         <button class="btn-edit" onclick="openEditWriter('${w.id}')">Edit</button>
         <button class="btn-danger" onclick="deleteWriter('${w.id}','${w.name.replace(/'/g,"\\'")}')">Delete</button>
       </div>
