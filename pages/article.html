@@ -52,6 +52,55 @@
     <span id="article-likes-bar"></span>
   </div>
 
+  <!-- AUDIO PLAYER -->
+  <div class="audio-player" id="audio-player">
+    <div class="audio-player-header">
+      <div class="audio-player-label">
+        <span class="audio-icon">🎧</span>
+        <span>Listen to this article</span>
+      </div>
+      <div class="audio-player-controls-right">
+        <select class="audio-voice-select" id="audio-voice-select" title="Choose voice">
+          <option value="">Loading voices…</option>
+        </select>
+        <div class="audio-speed-control">
+          <button class="audio-speed-btn" id="audio-speed-btn" title="Playback speed">1×</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="audio-player-body">
+      <button class="audio-play-btn" id="audio-play-btn" title="Play" aria-label="Play article audio">
+        <svg class="audio-play-icon" id="audio-play-icon" viewBox="0 0 24 24" width="28" height="28">
+          <polygon points="6,3 20,12 6,21" fill="currentColor"/>
+        </svg>
+        <svg class="audio-pause-icon hidden" id="audio-pause-icon" viewBox="0 0 24 24" width="28" height="28">
+          <rect x="5" y="3" width="4" height="18" rx="1" fill="currentColor"/>
+          <rect x="15" y="3" width="4" height="18" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <div class="audio-progress-wrapper">
+        <div class="audio-waveform" id="audio-waveform">
+          <!-- Waveform bars injected by JS -->
+        </div>
+        <div class="audio-progress-bar" id="audio-progress-bar">
+          <div class="audio-progress-fill" id="audio-progress-fill"></div>
+        </div>
+        <div class="audio-time-row">
+          <span class="audio-time-current" id="audio-time-current">0:00</span>
+          <span class="audio-time-total" id="audio-time-total">—</span>
+        </div>
+      </div>
+
+      <button class="audio-stop-btn" id="audio-stop-btn" title="Stop" aria-label="Stop audio">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <!-- ARTICLE BODY -->
   <article class="article-body" id="article-body">
     <div class="skeleton" style="height:18px;margin-bottom:12px"></div>
@@ -124,6 +173,7 @@
 
   <script src="../js/firebase.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/audio-player.js"></script>
   <script src="../js/article.js"></script>
 </body>
 </html>

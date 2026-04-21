@@ -232,6 +232,11 @@ function renderArticle(art) {
   // Author box
   document.getElementById('author-name').textContent = art.author || 'Editorial Team';
   document.getElementById('author-avatar').textContent = (art.author || 'A')[0].toUpperCase();
+
+  // Set article content for Audio Player
+  if (typeof AudioPlayer !== 'undefined' && AudioPlayer.setArticle) {
+    AudioPlayer.setArticle(art);
+  }
 }
 
 // ── Load Writer for Follow Button ─────────────────────
@@ -373,5 +378,8 @@ window.deleteComment = deleteComment;
 function escapeHTML(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+
+// Initialize audio player (code in audio-player.js)
+AudioPlayer.init();
 
 loadArticle();
