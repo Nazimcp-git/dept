@@ -379,20 +379,9 @@
       btn.innerHTML = '<span class="spinner"></span> Processing…';
 
       try {
-        const docRef = db.collection('subscribers').doc(emailParam);
-        const snap   = await docRef.get();
-
-        if (!snap.exists || snap.data().active === false) {
-          showState('state-already');
-          return;
-        }
-
-        // Mark as inactive (soft delete — keeps record for analytics)
-        await docRef.update({ active: false, unsubscribedAt: firebase.firestore.FieldValue.serverTimestamp() });
-
+        await db.collection('subscribers').doc(emailParam).delete();
         document.getElementById('success-email').textContent = emailParam;
         showState('state-success');
-
       } catch (e) {
         console.error('Unsubscribe error:', e);
         document.getElementById('error-msg').textContent = e.message || 'An unexpected error occurred.';
