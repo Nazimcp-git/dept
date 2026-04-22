@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unsubscribe — Noor Al-Quran</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="manifest" href="../manifest.json"/>
+  <meta name="theme-color" content="#1B4332"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B4332;
+      --green-mid:  #2D6A4F;
+      --gold:       #D4A853;
+      --bg:         #F5F0E8;
+      --card:       #FFFFFF;
+      --text:       #1C1C1E;
+      --muted:      #888;
+      --border:     rgba(0,0,0,0.08);
+      --serif:      'Playfair Display', Georgia, serif;
+      --sans:       'Inter', system-ui, sans-serif;
+      --radius:     20px;
+      --shadow:     0 24px 64px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(27,67,50,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Decorative blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(27,67,50,0.12), transparent);
+      top: -100px; left: -100px;
+    }
+    .blob-2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(212,168,83,0.10), transparent);
+      bottom: -80px; right: -80px;
+    }
+
+    /* Nav bar */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      background: rgba(245,240,232,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 3rem 2.5rem;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      margin-top: 4rem;
+      border: 1px solid var(--border);
+      animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* States */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* Icon container */
+    .icon-wrap {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 1.5rem;
+    }
+    .icon-wrap.warning {
+      background: rgba(212,168,83,0.12);
+      border: 2px solid rgba(212,168,83,0.25);
+    }
+    .icon-wrap.success {
+      background: rgba(27,67,50,0.08);
+      border: 2px solid rgba(27,67,50,0.2);
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .icon-wrap.error {
+      background: rgba(220,38,38,0.07);
+      border: 2px solid rgba(220,38,38,0.18);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: 1.7rem;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.8rem;
+    }
+
+    .email-pill {
+      display: inline-block;
+      background: rgba(27,67,50,0.07);
+      color: var(--green);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.8rem;
+      word-break: break-all;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-block;
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(135deg, #1B4332, #2D6A4F);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+      margin-bottom: 0.8rem;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(27,67,50,0.25);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-ghost:hover {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(27,67,50,0.03);
+    }
+
+    /* Loading spinner */
+    .spinner {
+      width: 22px; height: 22px;
+      border: 3px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Divider */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 1rem 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Footer note */
+    .footer-note {
+      margin-top: 2rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .footer-note a {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    /* Back link */
+    .back-link {
+      margin-top: 1.5rem;
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--green); }
+
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1.4rem; }
+      h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a href="../" class="brand">☽ Noor Al-Quran</a>
+  </div>
+
+  <div class="card">
+
+    <!-- ── STATE: Confirm ── -->
+    <div class="state active" id="state-confirm">
+      <div class="icon-wrap warning">✉️</div>
+      <h1>Unsubscribe</h1>
+      <p class="subtitle">You'll stop receiving new article notifications from Noor Al-Quran.</p>
+      <div class="email-pill" id="display-email">Loading…</div>
+      <button class="btn-primary" id="confirm-btn" onclick="doUnsubscribe()">
+        Yes, unsubscribe me
+      </button>
+      <div class="or-divider">or</div>
+      <a href="../" class="btn-ghost">↩ Keep my subscription</a>
+      <p class="footer-note">
+        Changed your mind? You can always re-subscribe on the <a href="../#newsletter">homepage</a>.
+      </p>
+    </div>
+
+    <!-- ── STATE: Success ── -->
+    <div class="state" id="state-success">
+      <div class="icon-wrap success">✓</div>
+      <h1>You're unsubscribed</h1>
+      <p class="subtitle">
+        <strong id="success-email"></strong> has been removed from our mailing list.
+        You won't receive any more article notifications.
+      </p>
+      <a href="../" class="btn-ghost" style="margin-top:0.5rem;">← Back to Noor Al-Quran</a>
+      <p class="footer-note">
+        Miss us already? <a href="../#newsletter">Re-subscribe here</a>.
+      </p>
+    </div>
+
+    <!-- ── STATE: Already Unsubscribed ── -->
+    <div class="state" id="state-already">
+      <div class="icon-wrap success">☑️</div>
+      <h1>Already done</h1>
+      <p class="subtitle">This email is not in our active subscriber list. Nothing to do!</p>
+      <a href="../" class="btn-ghost">← Back to homepage</a>
+    </div>
+
+    <!-- ── STATE: Error ── -->
+    <div class="state" id="state-error">
+      <div class="icon-wrap error">⚠️</div>
+      <h1>Something went wrong</h1>
+      <p class="subtitle" id="error-msg">We couldn't process your request. Please try again.</p>
+      <button class="btn-primary" onclick="location.reload()">Try again</button>
+      <div class="or-divider">or</div>
+      <a href="../" class="btn-ghost">← Back to homepage</a>
+    </div>
+
+    <!-- ── STATE: No Email ── -->
+    <div class="state" id="state-no-email">
+      <div class="icon-wrap warning">🔍</div>
+      <h1>No email found</h1>
+      <p class="subtitle">
+        This link seems incomplete. Please use the unsubscribe link from the email notification you received.
+      </p>
+      <a href="../" class="btn-ghost">← Back to homepage</a>
+    </div>
+
+  </div>
+
+  <a href="../" class="back-link">← Back to Noor Al-Quran</a>
+
+  <script src="../js/firebase.js"></script>
+  <script>
+    // ── Read email from URL ────────────────────────────────
+    const params    = new URLSearchParams(window.location.search);
+    const emailParam = params.get('email') ? params.get('email').toLowerCase().trim() : null;
+
+    function showState(id) {
+      document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // ── Init ──────────────────────────────────────────────
+    if (!emailParam || !emailParam.includes('@')) {
+      showState('state-no-email');
+    } else {
+      document.getElementById('display-email').textContent = emailParam;
+    }
+
+    // ── Unsubscribe action ────────────────────────────────
+    async function doUnsubscribe() {
+      const btn = document.getElementById('confirm-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Processing…';
+
+      try {
+        const docRef = db.collection('subscribers').doc(emailParam);
+        const snap   = await docRef.get();
+
+        if (!snap.exists || snap.data().active === false) {
+          showState('state-already');
+          return;
+        }
+
+        // Mark as inactive (soft delete — keeps record for analytics)
+        await docRef.update({ active: false, unsubscribedAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+        document.getElementById('success-email').textContent = emailParam;
+        showState('state-success');
+
+      } catch (e) {
+        console.error('Unsubscribe error:', e);
+        document.getElementById('error-msg').textContent = e.message || 'An unexpected error occurred.';
+        showState('state-error');
+      }
+    }
+    window.doUnsubscribe = doUnsubscribe;
+  </script>
+
+</body>
+</html>

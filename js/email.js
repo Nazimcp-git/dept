@@ -123,7 +123,7 @@ async function sendEmailJSEmail(toEmail, article) {
   await loadEmailJS();
 
   const articleUrl = `${SITE_URL}pages/article?id=${article.slug || article.id || ''}`;
-  const unsubUrl = `${SITE_URL}#newsletter`;
+  const unsubUrl = `${SITE_URL}pages/unsubscribe.html?email=${encodeURIComponent(toEmail)}`;
   const imgSrc = article.image ||
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format';
 
