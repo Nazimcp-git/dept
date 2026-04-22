@@ -6,7 +6,7 @@
 // Replace BREVO_SENDER.email with your verified sender address.
 // ==========================================================
 
-const BREVO_API_KEY = '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';
+const BREVO_API_KEY = 'xsmtpsib-a852330c3be640294faa51aabd197236ba9d6d734224d0111745e7c45864c3d0-QQgjsMZCKxHGrOlL';
 
 const BREVO_SENDER = {
   name: 'Nazim',
