@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Articles — Noor Al-Quran</title>
+  <meta name="description" content="Browse all reflections, tafsir, and lessons from the Qur'an." />
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* Additional styles for articles page if needed */
+    .filter-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    
+    .filter-dropdown {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: var(--bg-card);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      cursor: pointer;
+      outline: none;
+      transition: all var(--transition);
+      min-width: 150px;
+    }
+    
+    .filter-dropdown:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
+    }
+    
+    .search-bar {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    
+    .search-bar input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: var(--bg-card);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all var(--transition);
+    }
+    
+    .search-bar input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
+    }
+    
+    .search-bar .icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="../js/pwa.js"></script>
+</head>
+
+<body>
+
+  <!-- GLOBAL PRELOADER -->
+  <div id="global-preloader" class="preloader-overlay">
+    <div class="preloader-content">
+      <div class="spinner"></div>
+      <p id="preloader-text">Loading Noor Al-Quran...</p>
+      <button id="preloader-retry" class="btn-primary" style="display: none; margin-top: 1.5rem;" onclick="location.reload()">Retry</button>
+    </div>
+  </div>
+
+  <div id="progress-bar"></div>
+  <div class="toast" id="toast"></div>
+
+  <nav id="navbar">
+    <a href="../" class="nav-brand">☽ Noor Al-Quran</a>
+    <ul class="nav-links">
+      <li><a href="../">Home</a></li>
+      <li><a href="articles.html" style="color: var(--green); font-weight: 600;">Articles</a></li>
+      <li><a href="../#topics">Topics</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
+        onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
+      <!-- Auth UI injected here by auth.js -->
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="section" style="padding-top: 2rem;">
+    <h1 class="section-title">All Articles</h1>
+    <p class="section-subtitle">Explore our complete collection of reflections, stories, and tafsir.</p>
+    <div class="section-divider"></div>
+
+    <!-- FILTER SECTION -->
+    <div class="filter-container">
+      <div class="search-bar">
+        <span class="icon">🔍</span>
+        <input type="text" id="article-search" placeholder="Search by title, excerpt, or tags..." autocomplete="off" />
+      </div>
+      
+      <select id="category-filter" class="filter-dropdown">
+        <option value="All">All Categories</option>
+        <option value="Tafsir">Tafsir</option>
+        <option value="Reflection">Reflection</option>
+        <option value="Stories">Stories</option>
+        <option value="Lessons">Lessons</option>
+      </select>
+      
+      <select id="writer-filter" class="filter-dropdown">
+        <option value="All">All Writers</option>
+        <!-- Writers injected via JS -->
+      </select>
+    </div>
+
+    <!-- ACTIVE FILTERS SUMMARY (Optional) -->
+    <div class="topic-active-bar" id="active-filters-bar" style="margin-bottom: 2rem;">
+      <span id="active-filters-label">Showing all articles</span>
+      <button class="topic-clear-btn" id="reset-filters-btn" style="display: none;">✕ Clear Filters</button>
+    </div>
+
+    <div class="articles-grid" id="all-articles-grid">
+      <!-- Skeletons while loading -->
+      <div class="article-card">
+        <div class="skeleton" style="height:200px"></div>
+        <div class="card-body">
+          <div class="skeleton" style="height:14px;width:60px;margin-bottom:10px"></div>
+          <div class="skeleton" style="height:22px;margin-bottom:8px"></div>
+          <div class="skeleton" style="height:14px;width:80%"></div>
+        </div>
+      </div>
+      <div class="article-card">
+        <div class="skeleton" style="height:200px"></div>
+        <div class="card-body">
+          <div class="skeleton" style="height:14px;width:60px;margin-bottom:10px"></div>
+          <div class="skeleton" style="height:22px;margin-bottom:8px"></div>
+          <div class="skeleton" style="height:14px;width:80%"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">☽ Noor Al-Quran</div>
+        <p>A premium Islamic knowledge platform offering calm, scholarly reflections on the Qur'an in the English language.</p>
+      </div>
+      <div>
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="#" onclick="document.getElementById('category-filter').value='Tafsir'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Tafsir</a></li>
+          <li><a href="#" onclick="document.getElementById('category-filter').value='Reflection'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Reflection</a></li>
+          <li><a href="#" onclick="document.getElementById('category-filter').value='Stories'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Stories</a></li>
+          <li><a href="#" onclick="document.getElementById('category-filter').value='Lessons'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Lessons</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="admin.html">Admin Panel</a></li>
+          <li><a href="articles.html">All Articles</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Noor Al-Quran. Knowledge for the sake of Allah.</p>
+    </div>
+  </footer>
+
+  <script src="../js/firebase.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/articles-page.js"></script>
+</body>
+
+</html>
