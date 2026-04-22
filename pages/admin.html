@@ -157,14 +157,18 @@
           </div>
         </div>
 
-        <!-- Brevo Setup Banner -->
+        <!-- EmailJS Setup Banner -->
         <div class="brevo-setup-banner" id="brevo-banner">
           <div class="brevo-banner-icon">📧</div>
           <div class="brevo-banner-text">
-            <strong>Brevo API Key Required</strong>
-            <p>Open <code>js/email.js</code> and replace <code>YOUR_BREVO_API_KEY</code> with your key from
-            <a href="https://app.brevo.com" target="_blank">app.brevo.com</a> → Settings → API Keys.
-            Also update <code>BREVO_SENDER.email</code> with your verified sender address.</p>
+            <strong>EmailJS Setup Required</strong>
+            <p>
+              1. Sign up free at <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> →
+              <strong>Email Services</strong> → Add Gmail → copy <code>SERVICE_ID</code><br/>
+              2. <strong>Email Templates</strong> → Create → set <code>To: {{to_email}}</code> → copy <code>TEMPLATE_ID</code><br/>
+              3. <strong>Account → API Keys</strong> → copy <code>Public Key</code><br/>
+              4. Paste all three into <code>js/email.js</code> lines 22–24.
+            </p>
           </div>
           <button class="btn-icon" onclick="document.getElementById('brevo-banner').style.display='none'" title="Dismiss">✕</button>
         </div>
