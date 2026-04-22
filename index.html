@@ -212,6 +212,35 @@
     <div class="pagination" id="pagination"></div>
   </div>
 
+  <!-- ══ NEWSLETTER / SUBSCRIBE SECTION ══ -->
+  <section class="newsletter-section" id="newsletter">
+    <div class="newsletter-glow"></div>
+    <div class="newsletter-inner">
+      <div class="newsletter-icon">✉️</div>
+      <h2 class="newsletter-title">Stay Connected with Noor</h2>
+      <p class="newsletter-subtitle">
+        Receive new articles, reflections, and verses directly in your inbox.
+        No noise — only knowledge.
+      </p>
+      <form class="newsletter-form" id="subscribe-form" onsubmit="handleSubscribe(event)">
+        <div class="newsletter-input-wrap">
+          <input
+            type="email"
+            id="subscribe-email"
+            placeholder="your@email.com"
+            autocomplete="email"
+            required
+          />
+          <button type="submit" class="btn-subscribe" id="subscribe-btn">
+            <span id="subscribe-btn-text">Subscribe</span>
+          </button>
+        </div>
+        <p class="newsletter-note" id="subscribe-message"></p>
+      </form>
+      <p class="newsletter-privacy">🔒 No spam. Unsubscribe anytime.</p>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-grid">
@@ -244,6 +273,7 @@
 
   <script src="js/firebase.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/email.js"></script>
   <script src="js/app.js"></script>
 
   <!-- STORY OVERLAY -->

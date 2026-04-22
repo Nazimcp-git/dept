@@ -631,6 +631,49 @@ loadArticles();
 loadShorts();
 loadWriters();
 
+// ── Newsletter Subscribe Handler ───────────────────────
+async function handleSubscribe(event) {
+  event.preventDefault();
+  const emailInput = document.getElementById('subscribe-email');
+  const btn = document.getElementById('subscribe-btn');
+  const btnText = document.getElementById('subscribe-btn-text');
+  const msg = document.getElementById('subscribe-message');
+
+  const email = emailInput.value.trim();
+  if (!email) return;
+
+  btn.disabled = true;
+  btnText.textContent = 'Subscribing…';
+  msg.textContent = '';
+  msg.className = 'newsletter-note';
+
+  try {
+    if (typeof subscribeUser !== 'function') throw new Error('Email service not loaded.');
+    await subscribeUser(email);
+    btnText.textContent = '✓ Subscribed!';
+    msg.textContent = 'You\'re subscribed! You\'ll receive new articles in your inbox.';
+    msg.classList.add('newsletter-success');
+    emailInput.value = '';
+    setTimeout(() => {
+      btnText.textContent = 'Subscribe';
+      btn.disabled = false;
+      msg.textContent = '';
+      msg.className = 'newsletter-note';
+    }, 5000);
+  } catch (e) {
+    btn.disabled = false;
+    btnText.textContent = 'Subscribe';
+    if (e.message === 'already_subscribed') {
+      msg.textContent = '✓ You\'re already subscribed!';
+      msg.classList.add('newsletter-success');
+    } else {
+      msg.textContent = '⚠ ' + e.message;
+      msg.classList.add('newsletter-error');
+    }
+  }
+}
+window.handleSubscribe = handleSubscribe;
+
 // ── Story Viewer (Mobile Only) ─────────────────────────
 let currentStoryIndex = 0;
 let storyTimer;

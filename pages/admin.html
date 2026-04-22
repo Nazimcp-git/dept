@@ -75,6 +75,7 @@
         <div class="stat-card"><span class="stat-num" id="article-count">0</span><span class="stat-label">Articles</span></div>
         <div class="stat-card"><span class="stat-num" id="featured-count">0</span><span class="stat-label">Featured</span></div>
         <div class="stat-card"><span class="stat-num" id="writer-count">0</span><span class="stat-label">Writers</span></div>
+        <div class="stat-card"><span class="stat-num" id="subscriber-count">—</span><span class="stat-label">Subscribers</span></div>
       </div>
 
       <!-- ADMIN TABS -->
@@ -82,6 +83,7 @@
         <button class="admin-tab active" id="admin-tab-articles" onclick="switchAdminTab('articles')">📄 Articles</button>
         <button class="admin-tab" id="admin-tab-writers" onclick="switchAdminTab('writers')">✍️ Writers</button>
         <button class="admin-tab" id="admin-tab-shorts" onclick="switchAdminTab('shorts')">⚡ Shorts</button>
+        <button class="admin-tab" id="admin-tab-subscribers" onclick="switchAdminTab('subscribers')">📧 Subscribers</button>
       </div>
 
       <!-- ── ARTICLES TAB ── -->
@@ -139,6 +141,43 @@
             </thead>
             <tbody id="shorts-tbody">
               <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── SUBSCRIBERS TAB ── -->
+      <div class="admin-tab-panel" id="panel-subscribers">
+        <div class="admin-topbar">
+          <h2>Email Subscribers</h2>
+          <div class="topbar-actions">
+            <input type="text" id="subscriber-search" placeholder="Search subscribers…" oninput="filterSubscribers(this.value)"/>
+            <button class="btn-secondary" onclick="exportSubscribersCSV()">⬇ Export CSV</button>
+            <button class="btn-secondary" onclick="sendTestEmail()">📤 Test Email</button>
+          </div>
+        </div>
+
+        <!-- Brevo Setup Banner -->
+        <div class="brevo-setup-banner" id="brevo-banner">
+          <div class="brevo-banner-icon">📧</div>
+          <div class="brevo-banner-text">
+            <strong>Brevo API Key Required</strong>
+            <p>Open <code>js/email.js</code> and replace <code>YOUR_BREVO_API_KEY</code> with your key from
+            <a href="https://app.brevo.com" target="_blank">app.brevo.com</a> → Settings → API Keys.
+            Also update <code>BREVO_SENDER.email</code> with your verified sender address.</p>
+          </div>
+          <button class="btn-icon" onclick="document.getElementById('brevo-banner').style.display='none'" title="Dismiss">✕</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="articles-table">
+            <thead>
+              <tr>
+                <th>Email</th><th>Subscribed</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subscribers-tbody">
+              <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--text-muted)">Click the tab to load…</td></tr>
             </tbody>
           </table>
         </div>
@@ -296,6 +335,7 @@
 
   <script src="../js/firebase.js"></script>
   <script src="../js/auth.js"></script>
+  <script src="../js/email.js"></script>
   <script src="../js/admin.js"></script>
   <script>
     // ── Theme ──────────────────────────────────────────
@@ -324,6 +364,10 @@
         loadAdminArticles();
         loadAdminWriters();
         loadAdminShorts();
+        // Load subscriber count for the stat card
+        db.collection('subscribers').get().then(snap => {
+          document.getElementById('subscriber-count').textContent = snap.size;
+        }).catch(() => {});
       },
       () => {
         document.getElementById('login-screen').style.display = 'flex';
@@ -355,6 +399,32 @@
 
     async function handleSignOut() { await auth.signOut(); }
     window.handleSignOut = handleSignOut;
+
+    // ── Subscriber Search & Export ──────────────────────
+    function filterSubscribers(q) {
+      if (typeof subscribersCache === 'undefined') return;
+      const filtered = subscribersCache.filter(s => s.email.toLowerCase().includes(q.toLowerCase()));
+      if (typeof renderSubscribersList === 'function') renderSubscribersList(filtered);
+    }
+    window.filterSubscribers = filterSubscribers;
+
+    function exportSubscribersCSV() {
+      if (typeof subscribersCache === 'undefined' || !subscribersCache.length) {
+        if (typeof showToast === 'function') showToast('No subscribers to export.');
+        return;
+      }
+      const rows = ['Email,Status,Subscribed At'];
+      subscribersCache.forEach(s => {
+        const date = s.subscribedAt ? (s.subscribedAt.toDate ? s.subscribedAt.toDate() : new Date(s.subscribedAt)).toISOString().split('T')[0] : '';
+        rows.push(`${s.email},${s.active ? 'Active' : 'Unsubscribed'},${date}`);
+      });
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'nooralquran_subscribers.csv';
+      a.click();
+    }
+    window.exportSubscribersCSV = exportSubscribersCSV;
   </script>
 </body>
 </html>

@@ -32,10 +32,11 @@ function formatDate(ts) {
 // ADMIN TABS
 // ══════════════════════════════════════════════════════
 function switchAdminTab(tab) {
-  ['articles', 'writers', 'shorts'].forEach(t => {
+  ['articles', 'writers', 'shorts', 'subscribers'].forEach(t => {
     document.getElementById(`admin-tab-${t}`)?.classList.toggle('active', t === tab);
     document.getElementById(`panel-${t}`)?.classList.toggle('active', t === tab);
   });
+  if (tab === 'subscribers') loadAdminSubscribers();
 }
 window.switchAdminTab = switchAdminTab;
 
@@ -146,7 +147,7 @@ async function saveArticle() {
       showToast('Article updated ✓');
     } else {
       data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      
+
       let finalSlug = data.slug || 'article';
       // Check if a document with this slug already exists
       const docRef = await db.collection('articles').doc(finalSlug).get();
@@ -154,12 +155,26 @@ async function saveArticle() {
         finalSlug = finalSlug + '-' + Math.random().toString(36).substr(2, 4);
         data.slug = finalSlug;
       }
-      
+
       await db.collection('articles').doc(finalSlug).set(data);
-      
+
       // Update writer's article count
       if (writerId) await db.collection('writers').doc(writerId).update({ articleCount: firebase.firestore.FieldValue.increment(1) });
-      showToast('Article published ✓');
+
+      showToast('Article published ✓ — Notifying subscribers…');
+
+      // ── Notify subscribers via Brevo ──────────────────
+      if (typeof notifySubscribers === 'function') {
+        const articleForEmail = { ...data, id: finalSlug, slug: finalSlug };
+        notifySubscribers(articleForEmail)
+          .then(count => {
+            if (count > 0) showToast(`📧 Email sent to ${count} subscriber${count !== 1 ? 's' : ''} ✓`);
+          })
+          .catch(e => {
+            console.error('Email notification failed:', e);
+            showToast('Article published, but email dispatch failed.');
+          });
+      }
     }
     closeArticleModal();
   } catch (e) {
@@ -416,3 +431,73 @@ async function deleteShort(id) {
   } catch (e) { showToast('Delete failed: ' + e.message); }
 }
 window.deleteShort = deleteShort;
+
+// ══════════════════════════════════════════════════════
+// SUBSCRIBERS
+// ══════════════════════════════════════════════════════
+let subscribersCache = [];
+
+function loadAdminSubscribers() {
+  db.collection('subscribers').orderBy('subscribedAt', 'desc').get().then(snap => {
+    subscribersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderSubscribersList(subscribersCache);
+    document.getElementById('subscriber-count').textContent = subscribersCache.length;
+  }).catch(e => console.error('Subscribers load error:', e));
+}
+window.loadAdminSubscribers = loadAdminSubscribers;
+
+function renderSubscribersList(subscribers) {
+  const tbody = document.getElementById('subscribers-tbody');
+  if (!tbody) return;
+  if (!subscribers.length) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:2rem">No subscribers yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = subscribers.map(s => {
+    const date = s.subscribedAt ? (s.subscribedAt.toDate ? s.subscribedAt.toDate() : new Date(s.subscribedAt)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+    const statusBadge = s.active ? '<span style="color:#2D6A4F;font-weight:600">● Active</span>' : '<span style="color:#888">○ Unsubscribed</span>';
+    return `
+    <tr>
+      <td><strong>${s.email}</strong></td>
+      <td>${date}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <button class="btn-danger" style="font-size:.8rem;padding:.3rem .7rem" onclick="deleteSubscriber('${s.id}')">Remove</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function deleteSubscriber(id) {
+  if (!confirm(`Remove subscriber "${id}"?`)) return;
+  try {
+    await db.collection('subscribers').doc(id).delete();
+    showToast('Subscriber removed.');
+    loadAdminSubscribers();
+  } catch (e) { showToast('Remove failed: ' + e.message); }
+}
+window.deleteSubscriber = deleteSubscriber;
+
+async function sendTestEmail() {
+  const testEmail = prompt('Enter email to send a test notification to:');
+  if (!testEmail) return;
+  const testArticle = {
+    id: 'test-article',
+    slug: 'test-article',
+    title: 'Test Notification — Noor Al-Quran',
+    excerpt: 'This is a test notification email sent from the admin panel.',
+    category: 'Test',
+    author: 'Admin',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format'
+  };
+  try {
+    if (typeof sendBrevoEmail !== 'function') { showToast('email.js not loaded'); return; }
+    showToast('Sending test email…');
+    await sendBrevoEmail(testEmail, testArticle);
+    showToast(`Test email sent to ${testEmail} ✓`);
+  } catch (e) {
+    console.error(e);
+    showToast('Test failed: ' + e.message);
+  }
+}
+window.sendTestEmail = sendTestEmail;
