@@ -42,7 +42,7 @@ async function seedSampleData() {
 <p>This verse encapsulates the essence of tawakkul: the believer acts, strives, and then surrenders the outcome entirely to Allah — not out of resignation, but out of certainty in His wisdom and mercy.</p>
 
 <h2>The Two Dimensions of Tawakkul</h2>
-<p>Scholars of tafsir identify two inseparable dimensions: outward effort (<em>asbab</em>) and inward surrender (<em>tafwid</em>). The Prophet ﷺ illustrated this when he advised tying the camel first, then placing trust in Allah.</p>
+<p>Scholars of tafsir ((Tafsir refers to exegesis or commentary, particularly of the Qur'an.)) identify two inseparable dimensions: outward effort (<em>asbab</em>) and inward surrender (<em>tafwid</em>). The Prophet ﷺ illustrated this when he advised tying the camel first, then placing trust in Allah. ((Narrated by Anas bin Malik in Jami' at-Tirmidhi 2517.))</p>
 
 <p>Surah Az-Zumar dedicates an entire thematic arc to this: the contrast between those who, when afflicted, despair — and those who, when afflicted, turn toward their Lord with renewed certainty.</p>
 

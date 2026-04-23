@@ -2,6 +2,9 @@
 // article.js — Article Page Logic (with auth, comments, follow)
 // ==========================================================
 
+// ⚠️ WARNING: Hardcoding your API key here is NOT secure for production!
+const GROQ_API_KEY = "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";
+
 // ── Theme ──────────────────────────────────────────────
 const root = document.documentElement;
 const themeBtn = document.getElementById('theme-toggle');
@@ -40,6 +43,32 @@ function readingTime(content) {
   return Math.max(1, Math.ceil(words / 200));
 }
 function getBookmarks() { return []; } // legacy stub — no longer used
+
+function processFootnotes(html) {
+  if (!html) return html;
+  const footnotes = [];
+  // Match ((footnote text))
+  let processedHtml = html.replace(/\(\((.*?)\)\)/g, (match, p1) => {
+    footnotes.push(p1);
+    const index = footnotes.length;
+    return `<sup class="fn-ref"><a href="#fn-${index}" id="fnref-${index}">[${index}]</a></sup>`;
+  });
+
+  if (footnotes.length > 0) {
+    let fnHtml = `<div class="footnotes-section">
+      <div class="section-divider" style="margin: 2.5rem 0 1rem; width: 40px; background: var(--border);"></div>
+      <ol class="footnotes-list">`;
+    footnotes.forEach((fn, i) => {
+      fnHtml += `<li id="fn-${i + 1}">
+        ${fn} <a href="#fnref-${i + 1}" class="fn-backref" title="Jump back to reference" aria-label="Jump back to reference">↩</a>
+      </li>`;
+    });
+    fnHtml += `</ol></div>`;
+    processedHtml += fnHtml;
+  }
+
+  return processedHtml;
+}
 
 // ── State ──────────────────────────────────────────────
 const params = new URLSearchParams(window.location.search);
@@ -92,13 +121,13 @@ function updateBookmarkUI() {
 }
 
 // Check bookmark state when auth loads
-auth.onAuthStateChanged(function(user) {
+auth.onAuthStateChanged(function (user) {
   if (user && articleId) {
     var docId = user.uid + '_' + articleId;
-    db.collection('bookmarks').doc(docId).onSnapshot(function(doc) {
+    db.collection('bookmarks').doc(docId).onSnapshot(function (doc) {
       isArticleBookmarked = doc.exists;
       updateBookmarkUI();
-    }, function(err) {
+    }, function (err) {
       console.error('Bookmark check error:', err);
     });
   } else {
@@ -118,8 +147,8 @@ function handleBookmark() {
   if (isArticleBookmarked) {
     // Remove
     db.collection('bookmarks').doc(docId).delete()
-      .then(function() { showToast('Bookmark removed'); })
-      .catch(function(e) { console.error(e); showToast('Error removing bookmark'); });
+      .then(function () { showToast('Bookmark removed'); })
+      .catch(function (e) { console.error(e); showToast('Error removing bookmark'); });
     isArticleBookmarked = false;
     updateBookmarkUI();
   } else {
@@ -129,8 +158,8 @@ function handleBookmark() {
       articleId: articleId,
       savedAt: firebase.firestore.FieldValue.serverTimestamp()
     })
-      .then(function() { showToast('Article bookmarked ✓'); })
-      .catch(function(e) { console.error(e); showToast('Error bookmarking'); });
+      .then(function () { showToast('Article bookmarked ✓'); })
+      .catch(function (e) { console.error(e); showToast('Error bookmarking'); });
     isArticleBookmarked = true;
     updateBookmarkUI();
   }
@@ -210,7 +239,27 @@ function renderArticle(art) {
   document.getElementById('article-date').textContent = formatDate(art.createdAt);
   document.getElementById('article-read-time').textContent = readingTime(art.content) + ' min read';
   document.getElementById('article-likes-bar').textContent = '❤️ ' + (art.likes || 0) + ' likes';
-  document.getElementById('article-body').innerHTML = art.content || '';
+  document.getElementById('article-body').innerHTML = processFootnotes(art.content || '');
+
+  // AI Summary Block
+  const aiContainer = document.getElementById('ai-summary-container');
+  const aiBody = document.getElementById('ai-summary-body');
+  const aiWrapper = document.getElementById('ai-summary-wrapper');
+  const aiBtn = document.getElementById('btn-generate-dynamic-summary');
+
+  // Show the container frame
+  aiContainer.style.display = 'flex';
+
+  if (art.aiSummary) {
+    // If it was already generated and saved in DB (from old version or future update)
+    aiBody.textContent = art.aiSummary;
+    aiWrapper.classList.remove('hidden');
+    aiBtn.style.display = 'none';
+  } else {
+    // Show the generate button
+    aiWrapper.classList.add('hidden');
+    aiBtn.style.display = 'inline-block';
+  }
 
   // Author link
   const authorLink = document.getElementById('article-author-link');
@@ -381,5 +430,77 @@ function escapeHTML(str) {
 
 // Initialize audio player (code in audio-player.js)
 AudioPlayer.init();
+
+// ── AI Dynamic Summarization ───────────────────────────
+async function generateDynamicSummary() {
+  if (GROQ_API_KEY === "YOUR_GROQ_API_KEY_HERE" || !GROQ_API_KEY) {
+    showToast('Please set your Groq API Key in js/article.js first.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-generate-dynamic-summary');
+  const loading = document.getElementById('ai-loading');
+  const body = document.getElementById('ai-summary-body');
+  const articleContent = currentArticle?.content || '';
+
+  if (!articleContent) {
+    showToast('No article content to summarize.');
+    return;
+  }
+
+  btn.style.display = 'none';
+  loading.classList.remove('hidden');
+
+  // Strip HTML to reduce token usage
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = articleContent;
+  const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{
+          role: 'user',
+          content: "Please provide a simple, easy-to-understand summary of the following article in plain English. The summary should be detailed enough to cover the main points, around 4-5 sentences long, and written in a captivating way that encourages users to read the full article:\n\n" + plainText
+        }],
+        temperature: 0.7,
+        max_tokens: 250
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      console.error('Groq API Error details:', errData);
+      throw new Error(errData.error?.message || 'API Request Failed');
+    }
+    const data = await response.json();
+    const summaryText = data.choices?.[0]?.message?.content;
+
+    if (summaryText) {
+      body.textContent = summaryText.trim();
+      loading.classList.add('hidden');
+      document.getElementById('ai-summary-wrapper').classList.remove('hidden');
+
+      // Optionally save it back to the database to prevent re-generating later
+      if (articleId) {
+        db.collection('articles').doc(articleId).update({ aiSummary: summaryText.trim() }).catch(e => console.error('Failed to save summary:', e));
+      }
+    } else {
+      throw new Error('No summary generated');
+    }
+  } catch (e) {
+    console.error('Summarization Error:', e);
+    showToast('AI Error: ' + (e.message || 'Check your API key.'));
+    loading.classList.add('hidden');
+    btn.style.display = 'inline-block';
+  }
+}
+window.generateDynamicSummary = generateDynamicSummary;
 
 loadArticle();

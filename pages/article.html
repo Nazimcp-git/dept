@@ -101,6 +101,25 @@
     </div>
   </div>
 
+  <!-- AI SUMMARY BLOCK -->
+  <div class="ai-summary-player" id="ai-summary-container" style="display:none;">
+    <div class="ai-summary-header">
+      <div class="ai-summary-label">
+        <span class="ai-icon">✨</span>
+        <span>AI Summary</span>
+      </div>
+      <button class="ai-generate-btn" id="btn-generate-dynamic-summary" onclick="generateDynamicSummary()">Generate</button>
+    </div>
+    <div class="ai-summary-body-wrapper hidden" id="ai-summary-wrapper">
+      <div class="ai-summary-body" id="ai-summary-body"></div>
+    </div>
+    <div class="ai-loading hidden" id="ai-loading">
+      <div class="skeleton" style="height:14px;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:14px;margin-bottom:8px;width:90%"></div>
+      <div class="skeleton" style="height:14px;width:80%"></div>
+    </div>
+  </div>
+
   <!-- ARTICLE BODY -->
   <article class="article-body" id="article-body">
     <div class="skeleton" style="height:18px;margin-bottom:12px"></div>

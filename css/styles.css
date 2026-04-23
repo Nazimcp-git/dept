@@ -4278,9 +4278,9 @@ footer ul li a:hover {
   width: 600px;
   height: 400px;
   background: radial-gradient(ellipse at center,
-    rgba(212, 168, 83, 0.18) 0%,
-    rgba(45, 106, 79, 0.1) 50%,
-    transparent 75%);
+      rgba(212, 168, 83, 0.18) 0%,
+      rgba(45, 106, 79, 0.1) 50%,
+      transparent 75%);
   pointer-events: none;
   border-radius: 50%;
 }
@@ -4290,7 +4290,7 @@ footer ul li a:hover {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 28px 28px;
   pointer-events: none;
 }
@@ -4310,8 +4310,15 @@ footer ul li a:hover {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .newsletter-title {
@@ -4340,13 +4347,13 @@ footer ul li a:hover {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25),
-              0 0 0 1px rgba(212, 168, 83, 0.25);
+    0 0 0 1px rgba(212, 168, 83, 0.25);
   transition: box-shadow 0.3s ease;
 }
 
 .newsletter-input-wrap:focus-within {
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3),
-              0 0 0 2px rgba(212, 168, 83, 0.55);
+    0 0 0 2px rgba(212, 168, 83, 0.55);
 }
 
 .newsletter-input-wrap input[type="email"] {
@@ -4517,4 +4524,141 @@ footer ul li a:hover {
 
 .brevo-banner-text a:hover {
   text-decoration: underline;
-}
+}
+
+/* FOOTNOTES SYSTEM */
+.fn-ref a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.8em;
+  padding: 0 0.1rem;
+}
+
+[data-theme="dark"] .fn-ref a {
+  color: var(--gold);
+}
+
+.fn-ref a:hover {
+  text-decoration: underline;
+}
+
+.footnotes-section {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.footnotes-list {
+  padding-left: 1.2rem;
+}
+
+.footnotes-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.fn-backref {
+  color: var(--green);
+  text-decoration: none;
+  margin-left: 0.3rem;
+}
+
+[data-theme="dark"] .fn-backref {
+  color: var(--gold);
+}
+
+.fn-backref:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   AI SUMMARY (Player Style)
+   ========================================================= */
+.ai-summary-player {
+  margin: 2rem auto 3rem;
+  max-width: 680px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.ai-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.25rem;
+  background: rgba(212, 168, 83, 0.05);
+  border-radius: var(--radius);
+  transition: all 0.3s ease;
+}
+
+/* When expanded, the header should have flat bottom borders */
+.ai-summary-body-wrapper:not(.hidden)~.ai-summary-header,
+.ai-summary-player:has(.ai-summary-body-wrapper:not(.hidden)) .ai-summary-header {
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.ai-summary-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--gold);
+  font-size: 0.95rem;
+  font-family: var(--font-serif);
+}
+
+.ai-generate-btn {
+  background: var(--surface);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 0.3rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-generate-btn:hover {
+  background: var(--gold);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.ai-summary-body-wrapper {
+  padding: 1.25rem;
+  position: relative;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.02), rgba(27, 67, 50, 0.02));
+}
+
+.ai-summary-body {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.ai-loading {
+  padding: 1.25rem;
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+}
