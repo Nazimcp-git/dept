@@ -361,7 +361,20 @@
 
     // ── Auth State → Show Panel ────────────────────────
     initAuth(
-      user => {
+      (user, userData) => {
+        if (!userData || userData.role !== 'admin') {
+          // If not an admin, sign out and show an error
+          auth.signOut().then(() => {
+            const errEl = document.getElementById('login-error');
+            errEl.textContent = 'Access denied. You do not have admin privileges.';
+            errEl.style.display = 'block';
+            
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('admin-panel').style.display = 'none';
+          });
+          return;
+        }
+
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         document.getElementById('admin-user').textContent = user.email;
