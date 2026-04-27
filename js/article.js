@@ -224,6 +224,7 @@ async function loadArticle() {
   } catch (e) {
     console.error(e);
     document.getElementById('article-body').innerHTML = '<p>Error loading article.</p>';
+    if (window.showBugReportModal) window.showBugReportModal('Article Load Error', e.stack || e.toString());
   }
 }
 
@@ -323,7 +324,10 @@ async function loadRelated(category, excludeId) {
     const related = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(a => a.id !== excludeId).slice(0, 3);
     const grid = document.getElementById('related-grid');
     grid.innerHTML = related.length ? related.map(miniCard).join('') : '<p style="color:var(--text-muted)">No related articles.</p>';
-  } catch (e) { console.error(e); }
+  } catch (e) {
+    console.error(e);
+    if (window.showBugReportModal) window.showBugReportModal('Related Articles Load Error', e.stack || e.toString());
+  }
 }
 
 // ── Comments ───────────────────────────────────────────
@@ -499,6 +503,7 @@ async function generateDynamicSummary() {
     showToast('AI Error: ' + (e.message || 'Check your API key.'));
     loading.classList.add('hidden');
     btn.style.display = 'inline-block';
+    if (window.showBugReportModal) window.showBugReportModal('AI Summarization Error', e.stack || e.toString());
   }
 }
 window.generateDynamicSummary = generateDynamicSummary;

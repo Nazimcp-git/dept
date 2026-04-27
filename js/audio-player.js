@@ -227,6 +227,7 @@ const AudioPlayer = (() => {
     };
     utt.onerror = (e) => {
       if (e.error === 'interrupted' || e.error === 'canceled') return;
+      if (window.showBugReportModal) window.showBugReportModal('Audio Playback Failed', 'SpeechSynthesis Error: ' + e.error);
       onFinished();
     };
     utt.onstart = () => startWaveAnimation();

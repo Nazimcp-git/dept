@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="page-title">Article — Noor Al-Quran</title>
-  <meta name="description" id="page-desc" content="Read this article on Noor Al-Quran."/>
+  <meta name="description" id="page-desc" content="Read this article on Noor Al-Quran." />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#1B4332" />
-  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/styles.css" />
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script src="../js/pwa.js"></script>
 </head>
+
 <body>
 
   <div id="progress-bar"></div>
@@ -26,14 +28,15 @@
     </ul>
     <div class="nav-actions">
       <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
-      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu" onclick="document.querySelector('nav').classList.toggle('menu-open')">☰</button>
+      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
+        onclick="document.querySelector('nav').classList.toggle('menu-open')">☰</button>
       <!-- Auth UI injected by auth.js -->
     </div>
   </nav>
 
   <!-- ARTICLE HERO -->
   <div class="article-hero" id="article-hero">
-    <img id="hero-img" src="" alt="Article hero image" loading="eager"/>
+    <img id="hero-img" src="" alt="Article hero image" loading="eager" />
     <div class="article-hero-overlay"></div>
     <div class="article-hero-content">
       <div class="card-category" id="article-category"></div>
@@ -43,7 +46,8 @@
 
   <!-- META BAR -->
   <div class="article-meta-bar">
-    <a id="article-author-link" href="#" style="color:var(--green);text-decoration:none;font-weight:500" id="article-author"></a>
+    <a id="article-author-link" href="#" style="color:var(--green);text-decoration:none;font-weight:500"
+      id="article-author"></a>
     <span>·</span>
     <span id="article-date"></span>
     <span>·</span>
@@ -72,11 +76,11 @@
     <div class="audio-player-body">
       <button class="audio-play-btn" id="audio-play-btn" title="Play" aria-label="Play article audio">
         <svg class="audio-play-icon" id="audio-play-icon" viewBox="0 0 24 24" width="28" height="28">
-          <polygon points="6,3 20,12 6,21" fill="currentColor"/>
+          <polygon points="6,3 20,12 6,21" fill="currentColor" />
         </svg>
         <svg class="audio-pause-icon hidden" id="audio-pause-icon" viewBox="0 0 24 24" width="28" height="28">
-          <rect x="5" y="3" width="4" height="18" rx="1" fill="currentColor"/>
-          <rect x="15" y="3" width="4" height="18" rx="1" fill="currentColor"/>
+          <rect x="5" y="3" width="4" height="18" rx="1" fill="currentColor" />
+          <rect x="15" y="3" width="4" height="18" rx="1" fill="currentColor" />
         </svg>
       </button>
 
@@ -95,7 +99,7 @@
 
       <button class="audio-stop-btn" id="audio-stop-btn" title="Stop" aria-label="Stop audio">
         <svg viewBox="0 0 24 24" width="18" height="18">
-          <rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor"/>
+          <rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor" />
         </svg>
       </button>
     </div>
@@ -108,7 +112,8 @@
         <span class="ai-icon">✨</span>
         <span>AI Summary</span>
       </div>
-      <button class="ai-generate-btn" id="btn-generate-dynamic-summary" onclick="generateDynamicSummary()">Generate</button>
+      <button class="ai-generate-btn" id="btn-generate-dynamic-summary"
+        onclick="generateDynamicSummary()">Generate</button>
     </div>
     <div class="ai-summary-body-wrapper hidden" id="ai-summary-wrapper">
       <div class="ai-summary-body" id="ai-summary-body"></div>
@@ -143,7 +148,8 @@
       <h4 id="author-name">Author</h4>
       <p id="author-bio-text">Contributing writer at Noor Al-Quran.</p>
     </div>
-    <button class="btn-follow-sm" id="author-follow-btn" onclick="handleFollowWriter()" style="display:none">Follow</button>
+    <button class="btn-follow-sm" id="author-follow-btn" onclick="handleFollowWriter()"
+      style="display:none">Follow</button>
   </div>
 
   <!-- COMMENTS SECTION -->
@@ -155,13 +161,15 @@
     <div id="comment-form-wrapper">
       <div class="comment-auth-prompt" id="comment-auth-prompt">
         <p>☽ Sign in to join the discussion and share your reflections.</p>
-        <button class="btn-primary" onclick="showAuthModal('login')" style="padding:0.5rem 1.2rem;font-size:0.88rem">Sign In</button>
+        <button class="btn-primary" onclick="showAuthModal('login')"
+          style="padding:0.5rem 1.2rem;font-size:0.88rem">Sign In</button>
       </div>
       <div class="comment-form" id="comment-form" style="display:none">
         <textarea id="comment-input" placeholder="Share your reflection…" maxlength="1000"></textarea>
         <div class="comment-form-footer">
           <span style="font-size:0.78rem;color:var(--text-muted)" id="comment-char-count">0 / 1000</span>
-          <button class="btn-primary" id="comment-submit-btn" onclick="submitComment()" style="padding:0.5rem 1.2rem;font-size:0.88rem">Post Reflection</button>
+          <button class="btn-primary" id="comment-submit-btn" onclick="submitComment()"
+            style="padding:0.5rem 1.2rem;font-size:0.88rem">Post Reflection</button>
         </div>
       </div>
     </div>
@@ -183,16 +191,34 @@
 
   <footer>
     <div class="footer-grid">
-      <div><div class="footer-brand">☽ Noor Al-Quran</div><p>Scholarly reflections on the Qur'an.</p></div>
-      <div><h4>Navigate</h4><ul><li><a href="../">Home</a></li><li><a href="articles.html">Articles</a></li></ul></div>
-      <div><h4>Platform</h4><ul><li><a href="admin">Admin Panel</a></li></ul></div>
+      <div>
+        <div class="footer-brand">☽ Noor Al-Quran</div>
+        <p>Scholarly reflections on the Qur'an.</p>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="../">Home</a></li>
+          <li><a href="articles.html">Articles</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="admin">Admin Panel</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-bottom"><p>&copy; 2025 Noor Al-Quran.</p></div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Noor Al-Quran.</p>
+    </div>
   </footer>
 
+  <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/audio-player.js"></script>
   <script src="../js/article.js"></script>
 </body>
+
 </html>
