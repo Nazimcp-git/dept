@@ -3,7 +3,7 @@
 // ==========================================================
 
 // ⚠️ WARNING: Hardcoding your API key here is NOT secure for production!
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = "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";
 
 // ── Theme ──────────────────────────────────────────────
 const root = document.documentElement;
