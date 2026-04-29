@@ -37,7 +37,7 @@
   <!-- â”€â”€ LOGIN SCREEN â”€â”€ -->
   <div class="admin-login" id="login-screen">
     <div class="login-card">
-      <h2>🌙 Admin Panel</h2>
+      <h2>☽ Admin Panel</h2>
       <p>Sign in to manage Noor Al-Quran.</p>
       <div id="login-error" class="alert alert-error" style="display:none"></div>
       <div class="form-group">
@@ -59,12 +59,12 @@
   <div class="admin-panel" id="admin-panel">
 
     <div class="admin-header">
-      <h1>🌙 Noor Al-Quran — Admin</h1>
+      <h1>☽ Noor Al-Quran — Admin</h1>
       <div style="display:flex;gap:1rem;align-items:center">
         <span id="admin-user" style="font-size:.88rem;opacity:.8"></span>
         <a href="../" style="color:rgba(255,255,255,.7);font-size:.85rem;text-decoration:none">View Blog</a>
         <button class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,.3);padding:.4rem 1rem;font-size:.85rem" onclick="handleSignOut()">Sign Out</button>
-        <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+        <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">☽</button>
       </div>
     </div>
 
@@ -366,12 +366,12 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tb = document.getElementById('theme-toggle');
       if (tb) {
-        tb.textContent = saved === 'dark' ? '☀️ï¸' : '🌙';
+        tb.textContent = saved === 'dark' ? '☀️ï¸' : '☽';
         tb.addEventListener('click', () => {
           const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
           root.setAttribute('data-theme', next);
           localStorage.setItem('theme', next);
-          tb.textContent = next === 'dark' ? '☀️ï¸' : '🌙';
+          tb.textContent = next === 'dark' ? '☀️ï¸' : '☽';
         });
       }
     });
