@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 
 <head>
@@ -18,7 +18,7 @@
       margin-bottom: 2rem;
       align-items: center;
     }
-    
+
     .filter-dropdown {
       padding: 0.75rem 1.5rem;
       border: 1px solid var(--border);
@@ -32,18 +32,18 @@
       transition: all var(--transition);
       min-width: 150px;
     }
-    
+
     .filter-dropdown:focus {
       border-color: var(--green);
       box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
     }
-    
+
     .search-bar {
       flex: 1;
       min-width: 250px;
       position: relative;
     }
-    
+
     .search-bar input {
       width: 100%;
       padding: 0.75rem 1rem 0.75rem 2.5rem;
@@ -56,12 +56,12 @@
       outline: none;
       transition: all var(--transition);
     }
-    
+
     .search-bar input:focus {
       border-color: var(--green);
       box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
     }
-    
+
     .search-bar .icon {
       position: absolute;
       left: 1rem;
@@ -84,7 +84,8 @@
     <div class="preloader-content">
       <div class="spinner"></div>
       <p id="preloader-text">Loading Noor Al-Quran...</p>
-      <button id="preloader-retry" class="btn-primary" style="display: none; margin-top: 1.5rem;" onclick="location.reload()">Retry</button>
+      <button id="preloader-retry" class="btn-primary" style="display: none; margin-top: 1.5rem;"
+        onclick="location.reload()">Retry</button>
     </div>
   </div>
 
@@ -96,11 +97,12 @@
     <ul class="nav-links">
       <li><a href="../">Home</a></li>
       <li><a href="articles.html" style="color: var(--green); font-weight: 600;">Articles</a></li>
+      <li><a href="community.html">Community</a></li>
       <li><a href="../#topics">Topics</a></li>
     </ul>
 
     <div class="nav-actions">
-      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">☽</button>
       <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
         onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <!-- Auth UI injected here by auth.js -->
@@ -119,7 +121,7 @@
         <span class="icon">🔍</span>
         <input type="text" id="article-search" placeholder="Search by title, excerpt, or tags..." autocomplete="off" />
       </div>
-      
+
       <select id="category-filter" class="filter-dropdown">
         <option value="All">All Categories</option>
         <option value="Tafsir">Tafsir</option>
@@ -127,7 +129,7 @@
         <option value="Stories">Stories</option>
         <option value="Lessons">Lessons</option>
       </select>
-      
+
       <select id="writer-filter" class="filter-dropdown">
         <option value="All">All Writers</option>
         <!-- Writers injected via JS -->
@@ -159,7 +161,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="pagination" id="pagination"></div>
   </div>
 
@@ -168,15 +170,24 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand">☽ Noor Al-Quran</div>
-        <p>A premium Islamic knowledge platform offering calm, scholarly reflections on the Qur'an in the English language.</p>
+        <p>A premium Islamic knowledge platform offering calm, scholarly reflections on the Qur'an in the English
+          language.</p>
       </div>
       <div>
         <h4>Categories</h4>
         <ul>
-          <li><a href="#" onclick="document.getElementById('category-filter').value='Tafsir'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Tafsir</a></li>
-          <li><a href="#" onclick="document.getElementById('category-filter').value='Reflection'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Reflection</a></li>
-          <li><a href="#" onclick="document.getElementById('category-filter').value='Stories'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Stories</a></li>
-          <li><a href="#" onclick="document.getElementById('category-filter').value='Lessons'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Lessons</a></li>
+          <li><a href="#"
+              onclick="document.getElementById('category-filter').value='Tafsir'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Tafsir</a>
+          </li>
+          <li><a href="#"
+              onclick="document.getElementById('category-filter').value='Reflection'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Reflection</a>
+          </li>
+          <li><a href="#"
+              onclick="document.getElementById('category-filter').value='Stories'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Stories</a>
+          </li>
+          <li><a href="#"
+              onclick="document.getElementById('category-filter').value='Lessons'; document.getElementById('category-filter').dispatchEvent(new Event('change')); return false;">Lessons</a>
+          </li>
         </ul>
       </div>
       <div>
@@ -184,6 +195,7 @@
         <ul>
           <li><a href="admin.html">Admin Panel</a></li>
           <li><a href="articles.html">All Articles</a></li>
+          <li><a href="community.html">Community</a></li>
         </ul>
       </div>
     </div>
@@ -194,6 +206,8 @@
 
   <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
+  <script src="../js/micro-content.js"></script>
+  <script src="../js/predictive.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/articles-page.js"></script>
 </body>

@@ -26,7 +26,8 @@
     <div class="preloader-content">
       <div class="spinner"></div>
       <p id="preloader-text">Loading Noor Al-Quran...</p>
-      <button id="preloader-retry" class="btn-primary" style="display: none; margin-top: 1.5rem;" onclick="location.reload()">Retry</button>
+      <button id="preloader-retry" class="btn-primary" style="display: none; margin-top: 1.5rem;"
+        onclick="location.reload()">Retry</button>
     </div>
   </div>
 
@@ -38,6 +39,7 @@
     <ul class="nav-links">
       <li><a href="./">Home</a></li>
       <li><a href="pages/articles.html">Articles</a></li>
+      <li><a href="pages/community.html">Community</a></li>
       <li><a href="#topics">Topics</a></li>
     </ul>
 
@@ -47,7 +49,7 @@
     </div>
 
     <div class="nav-actions">
-      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">☽</button>
       <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
         onclick="document.getElementById('navbar').classList.toggle('menu-open')">☰</button>
       <!-- Auth UI injected here by auth.js -->
@@ -67,13 +69,13 @@
         </div>
       </div>
     </div>
-    
+
     <div class="carousel-nav" id="carousel-nav">
       <!-- Dots injected via JS -->
     </div>
   </section>
 
-  <!-- ══ BROWSE BY TOPIC ══ -->
+  <!-- â•â• BROWSE BY TOPIC â•â• -->
   <section class="topics-section" id="topics">
     <div class="topics-header">
       <span class="section-badge">📚 Browse by Topic</span>
@@ -138,7 +140,7 @@
       </div>
     </div>
   </div>
-  <!-- ══ SPIRITUAL SHORTS ══ -->
+  <!-- â•â• SPIRITUAL SHORTS â•â• -->
   <section class="shorts-section" id="shorts">
     <div class="shorts-header">
       <div class="shorts-header-left">
@@ -187,7 +189,8 @@
     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.4rem;">
       <div>
         <h2 class="section-title" id="articles-heading">Latest Articles</h2>
-        <p class="section-subtitle" id="articles-subtitle" style="margin-bottom: 0;">Browse recent writings by category or search above.</p>
+        <p class="section-subtitle" id="articles-subtitle" style="margin-bottom: 0;">Browse recent writings by category
+          or search above.</p>
       </div>
       <a href="pages/articles.html" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">View All</a>
     </div>
@@ -212,7 +215,7 @@
     <div class="pagination" id="pagination"></div>
   </div>
 
-  <!-- ══ NEWSLETTER / SUBSCRIBE SECTION ══ -->
+  <!-- â•â• NEWSLETTER / SUBSCRIBE SECTION â•â• -->
   <section class="newsletter-section" id="newsletter">
     <div class="newsletter-glow"></div>
     <div class="newsletter-inner">
@@ -224,13 +227,7 @@
       </p>
       <form class="newsletter-form" id="subscribe-form" onsubmit="handleSubscribe(event)">
         <div class="newsletter-input-wrap">
-          <input
-            type="email"
-            id="subscribe-email"
-            placeholder="your@email.com"
-            autocomplete="email"
-            required
-          />
+          <input type="email" id="subscribe-email" placeholder="your@email.com" autocomplete="email" required />
           <button type="submit" class="btn-subscribe" id="subscribe-btn">
             <span id="subscribe-btn-text">Subscribe</span>
           </button>
@@ -263,6 +260,7 @@
         <ul>
           <li><a href="pages/admin.html">Admin Panel</a></li>
           <li><a href="pages/articles.html">All Articles</a></li>
+          <li><a href="pages/community.html">Community</a></li>
         </ul>
       </div>
     </div>
@@ -273,6 +271,8 @@
 
   <script src="js/bug-reporter.js"></script>
   <script src="js/firebase.js"></script>
+  <script src="js/micro-content.js"></script>
+  <script src="js/predictive.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/email.js"></script>
   <script src="js/app.js"></script>
@@ -286,7 +286,7 @@
       <div class="story-brand">⚡ Spiritual Bites</div>
       <button class="story-close" onclick="closeStory()" aria-label="Close story">✕</button>
     </div>
-    
+
     <div class="story-content-wrapper" id="story-content-wrapper">
       <!-- Content injected via JS -->
     </div>

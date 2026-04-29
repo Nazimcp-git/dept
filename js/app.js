@@ -1,4 +1,4 @@
-// ==========================================================
+﻿// ==========================================================
 // app.js — Homepage Logic
 // ==========================================================
 
@@ -10,7 +10,6 @@ let currentPage = 1;
 const PER_PAGE = 6;
 let activeCategory = 'All';
 
-// ── Preloader State ────────────────────────────────────
 const loadingState = { articles: false, shorts: false, writers: false };
 let preloaderTimeout;
 
@@ -41,29 +40,29 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 8000);
 });
 
-// ── Theme ──────────────────────────────────────────────
+// â”€â”€ Theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const root = document.documentElement;
 const themeBtn = document.getElementById('theme-toggle');
 const savedTheme = localStorage.getItem('theme') || 'light';
 root.setAttribute('data-theme', savedTheme);
-themeBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+themeBtn.textContent = savedTheme === 'dark' ? '☀️ï¸' : '🌙';
 
 themeBtn.addEventListener('click', () => {
   const current = root.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   root.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);
-  themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+  themeBtn.textContent = next === 'dark' ? '☀️ï¸' : '🌙';
 });
 
-// ── Scroll Progress ────────────────────────────────────
+// â”€â”€ Scroll Progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const bar = document.getElementById('progress-bar');
 window.addEventListener('scroll', () => {
   const h = document.documentElement.scrollHeight - window.innerHeight;
   bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
 });
 
-// ── Toast ──────────────────────────────────────────────
+// â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -71,25 +70,25 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ── Format Date ────────────────────────────────────────
+// â”€â”€ Format Date â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function formatDate(ts) {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-// ── Reading Time ───────────────────────────────────────
+// â”€â”€ Reading Time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function readingTime(content) {
   const words = content ? content.replace(/<[^>]+>/g, '').split(/\s+/).length : 0;
   return Math.max(1, Math.ceil(words / 200));
 }
 
-// ── Bookmarks (Firestore-only, auth-required) ─────────
+// â”€â”€ Bookmarks (Firestore-only, auth-required) â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let userBookmarkIds = new Set(); // live set of bookmarked article IDs
 let _bookmarkUnsub = null;       // Firestore listener cleanup
 
 // Listen for auth changes to load/unload user bookmarks
-auth.onAuthStateChanged(function(user) {
+auth.onAuthStateChanged(function (user) {
   if (_bookmarkUnsub) { _bookmarkUnsub(); _bookmarkUnsub = null; }
   userBookmarkIds.clear();
 
@@ -97,15 +96,15 @@ auth.onAuthStateChanged(function(user) {
     // Real-time listener on this user's bookmarks
     _bookmarkUnsub = db.collection('bookmarks')
       .where('userId', '==', user.uid)
-      .onSnapshot(function(snap) {
+      .onSnapshot(function (snap) {
         userBookmarkIds.clear();
-        snap.docs.forEach(function(doc) {
+        snap.docs.forEach(function (doc) {
           userBookmarkIds.add(doc.data().articleId);
         });
         // Re-render article grids so bookmark icons update
         if (typeof applyFilter === 'function') applyFilter();
         if (typeof renderFeaturedGrid === 'function') renderFeaturedGrid(allArticles);
-      }, function(err) {
+      }, function (err) {
         console.error('Bookmarks listener error:', err);
       });
   } else {
@@ -130,11 +129,11 @@ function handleBookmark(id, btn) {
   if (userBookmarkIds.has(id)) {
     // Remove bookmark
     db.collection('bookmarks').doc(docId).delete()
-      .then(function() { showToast('Bookmark removed'); })
-      .catch(function(e) { console.error(e); showToast('Error removing bookmark'); });
+      .then(function () { showToast('Bookmark removed'); })
+      .catch(function (e) { console.error(e); showToast('Error removing bookmark'); });
     // Optimistic UI
     userBookmarkIds.delete(id);
-    if (span) { span.textContent = '🏷️'; span.className = ''; }
+    if (span) { span.textContent = 'ðŸ·ï¸'; span.className = ''; }
   } else {
     // Add bookmark
     db.collection('bookmarks').doc(docId).set({
@@ -142,8 +141,8 @@ function handleBookmark(id, btn) {
       articleId: id,
       savedAt: firebase.firestore.FieldValue.serverTimestamp()
     })
-      .then(function() { showToast('Article bookmarked ✓'); })
-      .catch(function(e) { console.error(e); showToast('Error bookmarking'); });
+      .then(function () { showToast('Article bookmarked âœ“'); })
+      .catch(function (e) { console.error(e); showToast('Error bookmarking'); });
     // Optimistic UI
     userBookmarkIds.add(id);
     if (span) { span.textContent = '🔖'; span.className = 'bookmarked'; }
@@ -151,7 +150,7 @@ function handleBookmark(id, btn) {
 }
 window.handleBookmark = handleBookmark;
 
-// ── Article Card HTML ──────────────────────────────────
+// â”€â”€ Article Card HTML â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function cardHTML(art, featured) {
   if (featured === undefined) featured = false;
   var bm = isBookmarked(art.id);
@@ -161,41 +160,39 @@ function cardHTML(art, featured) {
     return '<div class="article-card card-featured" id="card-' + art.id + '">' +
       '<img class="card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
       '<div class="card-body">' +
-        '<div class="card-category">' + (art.category || 'General') + '</div>' +
-        '<a class="card-title" href="pages/article?id=' + art.id + '">' + art.title + '</a>' +
-        '<p class="card-excerpt">' + (art.excerpt || '') + '</p>' +
-        '<div class="card-meta">' +
-          '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
-          '<div class="card-actions">' +
-            '<button onclick="handleBookmark(\'' + art.id + '\', this)" title="Bookmark">' +
-              '<span class="' + (bm ? 'bookmarked' : '') + '">' + (bm ? '🔖' : '🏷️') + '</span>' +
-            '</button>' +
-            '<button>❤️ ' + (art.likes || 0) + '</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }
-  return '<div class="article-card fade-up" id="card-' + art.id + '">' +
-    '<img class="card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
-    '<div class="card-body">' +
       '<div class="card-category">' + (art.category || 'General') + '</div>' +
       '<a class="card-title" href="pages/article?id=' + art.id + '">' + art.title + '</a>' +
       '<p class="card-excerpt">' + (art.excerpt || '') + '</p>' +
       '<div class="card-meta">' +
-        '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
-        '<div class="card-actions">' +
-          '<button onclick="handleBookmark(\'' + art.id + '\', this)" title="Bookmark">' +
-            '<span class="' + (bm ? 'bookmarked' : '') + '">' + (bm ? '🔖' : '🏷️') + '</span>' +
-          '</button>' +
-          '<button>❤️ ' + (art.likes || 0) + '</button>' +
-        '</div>' +
+      '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
+      '<div class="card-actions">' +
+      '<button onclick="handleBookmark(\'' + art.id + '\', this)" title="Bookmark">' +
+      '<span class="' + (bm ? 'bookmarked' : '') + '">' + (bm ? '🔖' : '🏷️') + '</span>' +
+      '</button>' +
+      '<button>❤️ ' + (art.likes || 0) + '</button>' +
       '</div>' +
+      '</div>' +
+      '</div>' +
+      '</div>';
+  }
+  return '<div class="article-card fade-up" id="card-' + art.id + '">' +
+    '<img class="card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
+    '<div class="card-body">' +
+    '<div class="card-category">' + (art.category || 'General') + '</div>' +
+    '<a class="card-title" href="pages/article?id=' + art.id + '">' + art.title + '</a>' +
+    '<p class="card-excerpt">' + (art.excerpt || '') + '</p>' +
+    '<div class="card-meta">' +
+    '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
+    '<div class="card-actions">' +
+    '<button onclick="handleBookmark(\'' + art.id + '\', this)" title="Bookmark">' +
+    '<span class="' + (bm ? 'bookmarked' : '') + '">' + (bm ? '🔖' : '🏷️') + '</span>' +
+    '</button>' +
+    '<button>❤️ ' + (art.likes || 0) + '</button>' +
     '</div>' +
-  '</div>';
+    '</div>' +
+    '</div>' +
+    '</div>';
 }
-
-// ── Render Featured Carousel ───────────────────────────
 let carouselInterval = null;
 let currentSlide = 0;
 
@@ -282,7 +279,6 @@ function startCarousel() {
   }, 6000); // 6 seconds per slide
 }
 
-// ── Carousel Swipe Support ──────────────────────────────
 let touchStartX = 0;
 let touchEndX = 0;
 
@@ -301,27 +297,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (carousel) {
     carousel.addEventListener('touchstart', e => {
       touchStartX = e.changedTouches[0].screenX;
-    }, {passive: true});
-    
+    }, { passive: true });
+
     carousel.addEventListener('touchend', e => {
       touchEndX = e.changedTouches[0].screenX;
       handleCarouselSwipe();
-    }, {passive: true});
-    
+    }, { passive: true });
+
     // Mouse drag support
     let isDragging = false;
     carousel.addEventListener('mousedown', e => {
       isDragging = true;
       touchStartX = e.screenX;
     });
-    
+
     carousel.addEventListener('mouseup', e => {
       if (!isDragging) return;
       isDragging = false;
       touchEndX = e.screenX;
       handleCarouselSwipe();
     });
-    
+
     carousel.addEventListener('mouseleave', e => {
       if (!isDragging) return;
       isDragging = false;
@@ -329,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── Render Featured Grid ───────────────────────────────
 function renderFeaturedGrid(articles) {
   const grid = document.getElementById('featured-grid');
   if (!grid) return;
@@ -338,7 +333,6 @@ function renderFeaturedGrid(articles) {
   grid.innerHTML = featured.map((a, i) => i === 0 ? cardHTML(a, true) : cardHTML(a)).join('');
 }
 
-// ── Render Articles Grid ───────────────────────────────
 function renderGrid(articles) {
   const grid = document.getElementById('articles-grid');
   if (!articles.length) {
@@ -352,7 +346,6 @@ function renderGrid(articles) {
   renderPagination(articles.length);
 }
 
-// ── Pagination ─────────────────────────────────────────
 function renderPagination(total) {
   const pages = Math.ceil(total / PER_PAGE);
   const p = document.getElementById('pagination');
@@ -365,13 +358,11 @@ function renderPagination(total) {
 }
 function goPage(n) { currentPage = n; renderGrid(filteredArticles); window.scrollTo({ top: document.getElementById('articles').offsetTop - 80, behavior: 'smooth' }); }
 
-// ── Category Filter (pills — secondary, synced) ───────
 document.getElementById('categories').addEventListener('click', e => {
   if (!e.target.classList.contains('pill')) return;
   selectTopic(e.target.dataset.cat);
 });
 
-// ── selectTopic — single source of truth ──────────────
 function selectTopic(cat) {
   activeCategory = cat;
   currentPage = 1;
@@ -422,7 +413,6 @@ function selectTopic(cat) {
 }
 window.selectTopic = selectTopic;
 
-// ── Search ─────────────────────────────────────────────
 let searchTimeout;
 document.getElementById('search-input').addEventListener('input', e => {
   clearTimeout(searchTimeout);
@@ -444,7 +434,6 @@ function applyFilter(query = document.getElementById('search-input').value.trim(
   renderGrid(filteredArticles);
 }
 
-// ── Update Topic Card Counts ───────────────────────────
 function updateTopicCounts(articles) {
   const cats = ['Tafsir', 'Reflection', 'Stories', 'Lessons'];
   cats.forEach(cat => {
@@ -454,12 +443,12 @@ function updateTopicCounts(articles) {
   });
 }
 
-// ── Load Articles from Firestore ───────────────────────
 function loadArticles() {
   db.collection('articles')
     .orderBy('createdAt', 'desc')
     .onSnapshot(snapshot => {
       allArticles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (typeof PredictiveEngine !== 'undefined') PredictiveEngine.injectSearchSuggestions('search-input', allArticles);
       filteredArticles = [...allArticles];
       renderHeroCarousel(allArticles);
       renderFeaturedGrid(allArticles);
@@ -469,12 +458,11 @@ function loadArticles() {
     }, err => {
       console.error('Firestore error:', err);
       document.getElementById('articles-grid').innerHTML =
-        '<div class="empty-state"><div class="icon">⚠️</div><p>Could not load articles. Check Firebase config.</p></div>';
+        '<div class="empty-state"><div class="icon">âš ï¸</div><p>Could not load articles. Check Firebase config.</p></div>';
       checkPreloader('articles');
     });
 }
 
-// ── Spiritual Shorts ───────────────────────────────────
 function loadShorts() {
   db.collection('shorts')
     .orderBy('createdAt', 'desc')
@@ -522,7 +510,7 @@ function scrollShorts(direction) {
 }
 window.scrollShorts = scrollShorts;
 
-// ── Verse of the Day ───────────────────────────────────
+// â”€â”€ Verse of the Day â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showVerseOfTheDay() {
   if (!allShorts.length) return;
 
@@ -576,7 +564,7 @@ function closeVerseOfTheDay() {
 }
 window.closeVerseOfTheDay = closeVerseOfTheDay;
 
-// ── Writers on Homepage ────────────────────────────────
+// â”€â”€ Writers on Homepage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadWriters() {
   db.collection('writers')
     .orderBy('followerCount', 'desc')
@@ -619,6 +607,7 @@ function renderWriters() {
   }).join('');
 }
 
+
 function scrollWriters(direction) {
   const wrapper = document.getElementById('writers-wrapper');
   if (!wrapper) return;
@@ -631,7 +620,7 @@ loadArticles();
 loadShorts();
 loadWriters();
 
-// ── Newsletter Subscribe Handler ───────────────────────
+// â”€â”€ Newsletter Subscribe Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function handleSubscribe(event) {
   event.preventDefault();
   const emailInput = document.getElementById('subscribe-email');
@@ -650,7 +639,7 @@ async function handleSubscribe(event) {
   try {
     if (typeof subscribeUser !== 'function') throw new Error('Email service not loaded.');
     await subscribeUser(email);
-    btnText.textContent = '✓ Subscribed!';
+    btnText.textContent = 'âœ“ Subscribed!';
     msg.textContent = 'You\'re subscribed! You\'ll receive new articles in your inbox.';
     msg.classList.add('newsletter-success');
     emailInput.value = '';
@@ -664,17 +653,17 @@ async function handleSubscribe(event) {
     btn.disabled = false;
     btnText.textContent = 'Subscribe';
     if (e.message === 'already_subscribed') {
-      msg.textContent = '✓ You\'re already subscribed!';
+      msg.textContent = 'âœ“ You\'re already subscribed!';
       msg.classList.add('newsletter-success');
     } else {
-      msg.textContent = '⚠ ' + e.message;
+      msg.textContent = 'âš  ' + e.message;
       msg.classList.add('newsletter-error');
     }
   }
 }
 window.handleSubscribe = handleSubscribe;
 
-// ── Story Viewer (Mobile Only) ─────────────────────────
+// â”€â”€ Story Viewer (Mobile Only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let currentStoryIndex = 0;
 let storyTimer;
 const STORY_DURATION = 12000; // 12 seconds
@@ -686,7 +675,7 @@ function openStory(index) {
 
   const overlay = document.getElementById('story-overlay');
   if (!overlay) return;
-  
+
   currentStoryIndex = index;
   renderStory();
   overlay.classList.remove('hidden');
@@ -743,7 +732,7 @@ function renderStory() {
         </div>
       `;
     }).join('');
-    
+
     // Force reflow to restart animation on the active segment if needed
     const activeFill = document.getElementById(`story-progress-${currentStoryIndex}`);
     if (activeFill) {
@@ -758,7 +747,7 @@ function renderStory() {
   if (contentWrapper) {
     const arabicHtml = short.arabic ? `<div class="story-arabic">${short.arabic}</div>` : '';
     const theme = short.theme || 'emerald';
-    
+
     // Set theme gradient
     const themes = {
       emerald: 'linear-gradient(135deg, #1B4332 0%, #0F1A14 100%)',
@@ -774,7 +763,7 @@ function renderStory() {
       rose: 'linear-gradient(135deg, #FB7185 0%, #E11D48 100%)',
       plum: 'linear-gradient(135deg, #701A75 0%, #4A044E 100%)'
     };
-    
+
     contentWrapper.style.background = themes[theme] || themes.emerald;
 
     contentWrapper.innerHTML = `
@@ -790,3 +779,4 @@ function renderStory() {
   clearTimeout(storyTimer);
   storyTimer = setTimeout(nextStory, STORY_DURATION);
 }
+

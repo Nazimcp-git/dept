@@ -144,12 +144,20 @@ function cardHTML(art) {
   var rt = readingTime(art.content);
   var imgSrc = art.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format';
   
+  let microPreview = '';
+  if (art.microContent && art.microContent.oneMinRead) {
+    microPreview = '<div class="micro-summary"><strong>1-Min Read:</strong> ' + art.microContent.oneMinRead.substring(0, 80) + '...</div>';
+  } else if (art.microContent && art.microContent.summary) {
+    microPreview = '<div class="micro-summary">' + art.microContent.summary.substring(0, 80) + '...</div>';
+  }
+
   return '<div class="article-card fade-up" id="card-' + art.id + '">' +
     '<img class="card-img" src="' + imgSrc + '" alt="' + art.title + '" loading="lazy">' +
     '<div class="card-body">' +
       '<div class="card-category">' + (art.category || 'General') + '</div>' +
       '<a class="card-title" href="article.html?id=' + art.id + '">' + art.title + '</a>' +
       '<p class="card-excerpt">' + (art.excerpt || '') + '</p>' +
+      microPreview +
       '<div class="card-meta">' +
         '<span>' + formatDate(art.createdAt) + ' · ' + rt + ' min read</span>' +
         '<div class="card-actions">' +
@@ -312,6 +320,11 @@ function loadArticles() {
     .onSnapshot(snapshot => {
       allArticles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
+      // Initialize Predictive Engine Search Suggestions
+      if (typeof PredictiveEngine !== 'undefined') {
+        PredictiveEngine.injectSearchSuggestions('article-search', allArticles);
+      }
+
       // If category passed in URL
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('category')) {

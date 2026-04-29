@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community — Noor Al-Quran</title>
+  <meta name="description"
+    content="Join the Noor Al-Quran community. Discuss articles, ask questions, and share reflections." />
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#1B4332" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="../js/pwa.js"></script>
+</head>
+
+<body>
+  <div id="progress-bar"></div>
+  <div class="toast" id="toast"></div>
+
+  <nav>
+    <a href="../" class="nav-brand">☽ Noor Al-Quran</a>
+    <ul class="nav-links">
+      <li><a href="../">Home</a></li>
+      <li><a href="articles.html">Articles</a></li>
+      <li><a href="community.html" style="color: var(--green); font-weight: 600;">Community</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">☽</button>
+      <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
+        onclick="document.querySelector('nav').classList.toggle('menu-open')">☰</button>
+      <!-- Auth UI injected by auth.js -->
+    </div>
+  </nav>
+
+  <!-- COMMUNITY SECTION -->
+  <div class="community-container">
+    <!-- Sidebar -->
+    <aside class="community-sidebar">
+      <h3>🌍 Channels</h3>
+      <ul class="channel-list" id="channel-list">
+        <li class="channel-item active" data-channel="general">
+          <span class="channel-icon">💬</span> General
+        </li>
+        <li class="channel-item" data-channel="articles">
+          <span class="channel-icon">📖</span> Article Discussions
+        </li>
+        <li class="channel-item" data-channel="qa">
+          <span class="channel-icon">❓</span> Q &amp; A
+        </li>
+        <li class="channel-item" data-channel="reflections">
+          <span class="channel-icon">💭</span> Reflections
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="community-chat-area">
+      <header class="chat-header">
+        <div class="chat-header-top">
+          <h2 id="current-channel-title"># General</h2>
+          <!-- Mobile: toggle sidebar/channel list -->
+          <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" aria-label="Toggle channels">☰ Channels</button>
+        </div>
+        <p id="current-channel-desc">Welcome to the community! Introduce yourself and chat with others.</p>
+      </header>
+
+      <!-- Welcome Banner (General channel only) -->
+      <div class="welcome-banner" id="welcome-banner" style="display:none;">
+        <div class="welcome-banner-icon">☽</div>
+        <div class="welcome-banner-content">
+          <h3>Welcome to the Noor Al-Quran Community!</h3>
+          <p>Introduce yourself, share your thoughts, and connect with fellow seekers of knowledge.</p>
+        </div>
+        <button class="welcome-banner-close" id="welcome-banner-close" title="Dismiss">✕</button>
+      </div>
+
+      <!-- Reflection Prompt Banner (Reflections channel only) -->
+      <div class="reflection-prompt-banner" id="reflection-prompt" style="display:none;">
+        <div class="reflection-prompt-icon">🪞</div>
+        <div class="reflection-prompt-text">
+          <span class="reflection-prompt-label">Today's Reflection Prompt</span>
+          <span class="reflection-prompt-question" id="reflection-prompt-text">What verse spoke to you today?</span>
+        </div>
+      </div>
+
+      <!-- Q&A Container (Q&A channel only) -->
+      <div class="qa-container" id="qa-container" style="display:none;">
+        <!-- Q&A Toolbar -->
+        <div class="qa-toolbar">
+          <div class="qa-filter-pills">
+            <button class="qa-filter-pill active" data-qa-filter="approved">Approved</button>
+            <button class="qa-filter-pill" data-qa-filter="my">My Questions</button>
+          </div>
+          <button class="btn-ask" id="btn-ask-question" disabled>✋ Ask a Question</button>
+        </div>
+
+        <!-- Pending notice for user's pending questions -->
+        <div class="qa-pending-notice" id="qa-pending-notice" style="display:none;">
+          ⏳ <span>You have questions awaiting admin approval.</span>
+        </div>
+
+        <!-- Question List View -->
+        <div class="qa-question-list" id="qa-question-list">
+          <div class="qa-empty-state">
+            <div class="icon">❓</div>
+            <p>Loading questions...</p>
+          </div>
+        </div>
+
+        <!-- Thread View (hidden by default) -->
+        <div class="qa-thread-view" id="qa-thread-view" style="display:none;">
+          <div class="qa-thread-header">
+            <button class="qa-back-btn" id="qa-back-btn">← Back</button>
+            <div class="qa-thread-question">
+              <h3 id="qa-thread-title">Question</h3>
+              <div class="qa-question-meta">
+                <span id="qa-thread-author">By user</span>
+                <span id="qa-thread-time">Just now</span>
+                <span class="qa-answer-count" id="qa-thread-answer-count">💬 0 answers</span>
+              </div>
+            </div>
+          </div>
+          <div class="qa-answers-list" id="qa-answers-list">
+            <!-- Answers injected here -->
+          </div>
+          <!-- Answer input -->
+          <div class="qa-ask-form" id="qa-answer-form">
+            <textarea id="qa-answer-input" placeholder="Write your answer..." rows="1" disabled></textarea>
+            <button class="btn-send" id="btn-send-answer" disabled aria-label="Send answer">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Messages (General, Articles, Reflections) -->
+      <div class="chat-messages" id="chat-messages">
+        <div class="empty-state" style="padding: 2rem; text-align: center; color: var(--text-muted); width: 100%;">
+          <p>Loading messages...</p>
+        </div>
+      </div>
+
+      <!-- Chat Input Area (General, Articles, Reflections) -->
+      <div class="chat-input-area" id="chat-input-area">
+        <!-- Article Mention Dropdown -->
+        <div class="mention-dropdown" id="mention-dropdown">
+          <div class="mention-dropdown-header">📖 Mention an article</div>
+          <div id="mention-dropdown-list"></div>
+        </div>
+
+        <div class="chat-input-wrapper">
+          <textarea id="chat-input" placeholder="Type your message..." rows="1"></textarea>
+          <!-- Character counter for reflections -->
+          <div class="char-counter" id="char-counter" style="display:none;">0 / 500</div>
+
+          <!-- This will overlay if the user is not logged in -->
+          <div class="chat-auth-prompt" id="chat-auth-prompt" style="display: none;">
+            <p style="margin-right: 1rem; color: var(--text); font-weight: 500;">☽ Sign in to chat</p>
+            <button onclick="showAuthModal('login')">Sign In</button>
+          </div>
+        </div>
+
+        <!-- Chatting-as indicator -->
+
+
+        <button class="btn-send" id="btn-send-message" aria-label="Send message" disabled>
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">☽ Noor Al-Quran</div>
+        <p>Scholarly reflections on the Qur'an.</p>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="../">Home</a></li>
+          <li><a href="articles.html">Articles</a></li>
+          <li><a href="community.html">Community</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="admin.html">Admin Panel</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Noor Al-Quran.</p>
+    </div>
+  </footer>
+
+  <script src="../js/bug-reporter.js"></script>
+  <script src="../js/firebase.js"></script>
+  <script src="../js/micro-content.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/community.js"></script>
+</body>
+
+</html>

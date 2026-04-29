@@ -1,11 +1,9 @@
-// ==========================================================
+﻿// ==========================================================
 // article.js — Article Page Logic (with auth, comments, follow)
 // ==========================================================
 
-// ⚠️ WARNING: Hardcoding your API key here is NOT secure for production!
+// âš ï¸ WARNING: Hardcoding your API key here is NOT secure for production!
 const GROQ_API_KEY = "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";
-
-// ── Theme ──────────────────────────────────────────────
 const root = document.documentElement;
 const themeBtn = document.getElementById('theme-toggle');
 const savedTheme = localStorage.getItem('theme') || 'light';
@@ -18,21 +16,18 @@ themeBtn.addEventListener('click', () => {
   themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
 });
 
-// ── Scroll Progress ────────────────────────────────────
 const bar = document.getElementById('progress-bar');
 window.addEventListener('scroll', () => {
   const h = document.documentElement.scrollHeight - window.innerHeight;
   bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
 });
 
-// ── Toast ──────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ── Helpers ────────────────────────────────────────────
 function formatDate(ts) {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
@@ -60,7 +55,7 @@ function processFootnotes(html) {
       <ol class="footnotes-list">`;
     footnotes.forEach((fn, i) => {
       fnHtml += `<li id="fn-${i + 1}">
-        ${fn} <a href="#fnref-${i + 1}" class="fn-backref" title="Jump back to reference" aria-label="Jump back to reference">↩</a>
+        ${fn} <a href="#fnref-${i + 1}" class="fn-backref" title="Jump back to reference" aria-label="Jump back to reference">â†©</a>
       </li>`;
     });
     fnHtml += `</ol></div>`;
@@ -70,29 +65,29 @@ function processFootnotes(html) {
   return processedHtml;
 }
 
-// ── State ──────────────────────────────────────────────
+// â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const params = new URLSearchParams(window.location.search);
 const articleId = params.get('id');
 let currentArticle = null;
 let writerData = null;
 let isFollowingWriter = false;
 
-// ── Copy Verse ─────────────────────────────────────────
+// â”€â”€ Copy Verse 
 function copyVerse(btn) {
   const bq = btn.closest('blockquote');
   const arabic = bq.querySelector('.verse-arabic');
   const translation = bq.querySelector('.verse-translation');
   const text = (arabic ? arabic.textContent + '\n' : '') + (translation ? translation.textContent : '');
-  navigator.clipboard.writeText(text).then(() => showToast('Verse copied ✓'));
+  navigator.clipboard.writeText(text).then(() => showToast('Verse copied âœ“'));
 }
 window.copyVerse = copyVerse;
 
 function copyLink() {
-  navigator.clipboard.writeText(window.location.href).then(() => showToast('Link copied ✓'));
+  navigator.clipboard.writeText(window.location.href).then(() => showToast('Link copied âœ“'));
 }
 window.copyLink = copyLink;
 
-// ── Like (auth-gated) ──────────────────────────────────
+// â”€â”€ Like (auth-gated) 
 async function handleLike() {
   if (!auth.currentUser) { showAuthModal('login'); return; }
   if (!articleId) return;
@@ -106,18 +101,18 @@ async function handleLike() {
     document.getElementById('like-btn').classList.add('liked');
     const count = document.getElementById('like-count');
     count.textContent = parseInt(count.textContent || '0') + 1;
-    showToast('Liked! JazakAllahu Khayran ❤️');
+    showToast('Liked! JazakAllahu Khayran.');
   } catch (e) { showToast('Could not register like.'); }
 }
 window.handleLike = handleLike;
 
-// ── Bookmark State ────────────────────────────────────
+// â”€â”€ Bookmark State 
 let isArticleBookmarked = false;
 
 function updateBookmarkUI() {
   var btn = document.getElementById('bookmark-btn');
   if (!btn) return;
-  btn.textContent = isArticleBookmarked ? '🔖 Bookmarked' : '🏷️ Bookmark';
+  btn.textContent = isArticleBookmarked ? '🔖 Bookmarked' : '🔖 Bookmark';
 }
 
 // Check bookmark state when auth loads
@@ -136,7 +131,7 @@ auth.onAuthStateChanged(function (user) {
   }
 });
 
-// ── Bookmark (auth-required, Firestore-only) ──────────
+// â”€â”€ Bookmark (auth-required, Firestore-only) 
 function handleBookmark() {
   if (!auth.currentUser) { showAuthModal('login'); return; }
   if (!articleId) return;
@@ -158,7 +153,7 @@ function handleBookmark() {
       articleId: articleId,
       savedAt: firebase.firestore.FieldValue.serverTimestamp()
     })
-      .then(function () { showToast('Article bookmarked ✓'); })
+      .then(function () { showToast('Article bookmarked âœ“'); })
       .catch(function (e) { console.error(e); showToast('Error bookmarking'); });
     isArticleBookmarked = true;
     updateBookmarkUI();
@@ -166,7 +161,7 @@ function handleBookmark() {
 }
 window.handleBookmark = handleBookmark;
 
-// ── Follow Writer ──────────────────────────────────────
+// â”€â”€ Follow Writer 
 async function handleFollowWriter() {
   if (!auth.currentUser) { showAuthModal('login'); return; }
   if (!writerData) return;
@@ -189,13 +184,13 @@ async function handleFollowWriter() {
       isFollowingWriter = true;
       btn.textContent = '✓ Following';
       btn.classList.add('following');
-      showToast('Following! JazakAllahu Khayran ✓');
+      showToast('Following! JazakAllahu Khayran ');
     }
   } catch (e) { showToast('Action failed.'); }
 }
 window.handleFollowWriter = handleFollowWriter;
 
-// ── Mini card for related ──────────────────────────────
+// â”€â”€ Mini card for related 
 function miniCard(art) {
   const imgSrc = art.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600';
   return `
@@ -210,7 +205,7 @@ function miniCard(art) {
   </div>`;
 }
 
-// ── Load Article ───────────────────────────────────────
+// â”€â”€ Load Article 
 async function loadArticle() {
   if (!articleId) { document.getElementById('article-body').innerHTML = '<p>No article ID provided.</p>'; return; }
   try {
@@ -239,8 +234,12 @@ function renderArticle(art) {
   document.getElementById('article-category').textContent = art.category || '';
   document.getElementById('article-date').textContent = formatDate(art.createdAt);
   document.getElementById('article-read-time').textContent = readingTime(art.content) + ' min read';
-  document.getElementById('article-likes-bar').textContent = '❤️ ' + (art.likes || 0) + ' likes';
+  document.getElementById('article-likes-bar').textContent = '❤️' + (art.likes || 0) + ' likes';
   document.getElementById('article-body').innerHTML = processFootnotes(art.content || '');
+
+  if (typeof MicroContent !== 'undefined' && art.microContent && art.microContent.highlights) {
+    MicroContent.injectHighlights(document.getElementById('article-body'), art.microContent.highlights);
+  }
 
   // AI Summary Block
   const aiContainer = document.getElementById('ai-summary-container');
@@ -264,7 +263,7 @@ function renderArticle(art) {
 
   // Author link
   const authorLink = document.getElementById('article-author-link');
-  authorLink.textContent = '✍️ ' + (art.author || 'Editorial Team');
+  authorLink.textContent = '✍️' + (art.author || 'Editorial Team');
   if (art.writerId) authorLink.href = `profile?id=${art.writerId}`;
 
   // Like state
@@ -289,7 +288,7 @@ function renderArticle(art) {
   }
 }
 
-// ── Load Writer for Follow Button ─────────────────────
+// â”€â”€ Load Writer for Follow Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadWriter(wId) {
   try {
     const doc = await db.collection('writers').doc(wId).get();
@@ -317,7 +316,7 @@ async function loadWriter(wId) {
   } catch (e) { console.error(e); }
 }
 
-// ── Load Related Articles ──────────────────────────────
+// â”€â”€ Load Related Articles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadRelated(category, excludeId) {
   try {
     const snap = await db.collection('articles').where('category', '==', category).limit(4).get();
@@ -330,7 +329,7 @@ async function loadRelated(category, excludeId) {
   }
 }
 
-// ── Comments ───────────────────────────────────────────
+// â”€â”€ Comments â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadComments(artId) {
   db.collection('comments')
     .where('articleId', '==', artId)
@@ -409,7 +408,7 @@ async function submitComment() {
     });
     input.value = '';
     document.getElementById('comment-char-count').textContent = '0 / 1000';
-    showToast('Reflection posted ✓');
+    showToast('Reflection posted âœ“');
   } catch (e) {
     console.error(e);
     showToast('Could not post comment.');
@@ -435,7 +434,7 @@ function escapeHTML(str) {
 // Initialize audio player (code in audio-player.js)
 AudioPlayer.init();
 
-// ── AI Dynamic Summarization ───────────────────────────
+// â”€â”€ AI Dynamic Summarization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function generateDynamicSummary() {
   if (GROQ_API_KEY === "YOUR_GROQ_API_KEY_HERE" || !GROQ_API_KEY) {
     showToast('Please set your Groq API Key in js/article.js first.');
@@ -509,3 +508,4 @@ async function generateDynamicSummary() {
 window.generateDynamicSummary = generateDynamicSummary;
 
 loadArticle();
+

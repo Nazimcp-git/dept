@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
@@ -11,7 +11,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="../js/pwa.js"></script>
+    <script src="../js/pwa.js"></script>
   <style>
     .stat-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 2rem;display:flex;flex-direction:column;gap:.3rem; }
     .stat-card .stat-num { font-family:var(--font-serif);font-size:2rem;font-weight:700;color:var(--green); }
@@ -34,10 +34,10 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- ── LOGIN SCREEN ── -->
+  <!-- â”€â”€ LOGIN SCREEN â”€â”€ -->
   <div class="admin-login" id="login-screen">
     <div class="login-card">
-      <h2>☽ Admin Panel</h2>
+      <h2>🌙 Admin Panel</h2>
       <p>Sign in to manage Noor Al-Quran.</p>
       <div id="login-error" class="alert alert-error" style="display:none"></div>
       <div class="form-group">
@@ -46,20 +46,20 @@
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+        <input type="password" id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"/>
       </div>
       <button class="btn-primary btn-full" id="login-btn" onclick="handleLogin()">Sign In</button>
       <p style="margin-top:1rem;font-size:.82rem;color:var(--text-muted);text-align:center">
-        <a href="../" style="color:var(--green)">← Back to Blog</a>
+        <a href="../" style="color:var(--green)">â† Back to Blog</a>
       </p>
     </div>
   </div>
 
-  <!-- ── ADMIN PANEL ── -->
+  <!-- â”€â”€ ADMIN PANEL â”€â”€ -->
   <div class="admin-panel" id="admin-panel">
 
     <div class="admin-header">
-      <h1>☽ Noor Al-Quran — Admin</h1>
+      <h1>🌙 Noor Al-Quran — Admin</h1>
       <div style="display:flex;gap:1rem;align-items:center">
         <span id="admin-user" style="font-size:.88rem;opacity:.8"></span>
         <a href="../" style="color:rgba(255,255,255,.7);font-size:.85rem;text-decoration:none">View Blog</a>
@@ -76,17 +76,19 @@
         <div class="stat-card"><span class="stat-num" id="featured-count">0</span><span class="stat-label">Featured</span></div>
         <div class="stat-card"><span class="stat-num" id="writer-count">0</span><span class="stat-label">Writers</span></div>
         <div class="stat-card"><span class="stat-num" id="subscriber-count">—</span><span class="stat-label">Subscribers</span></div>
+        <div class="stat-card"><span class="stat-num" id="qa-pending-count">0</span><span class="stat-label">Pending Q&A</span></div>
       </div>
 
       <!-- ADMIN TABS -->
       <div class="admin-tabs">
         <button class="admin-tab active" id="admin-tab-articles" onclick="switchAdminTab('articles')">📄 Articles</button>
-        <button class="admin-tab" id="admin-tab-writers" onclick="switchAdminTab('writers')">✍️ Writers</button>
+        <button class="admin-tab" id="admin-tab-writers" onclick="switchAdminTab('writers')">âœï¸ Writers</button>
         <button class="admin-tab" id="admin-tab-shorts" onclick="switchAdminTab('shorts')">⚡ Shorts</button>
         <button class="admin-tab" id="admin-tab-subscribers" onclick="switchAdminTab('subscribers')">📧 Subscribers</button>
+        <button class="admin-tab" id="admin-tab-qa" onclick="switchAdminTab('qa')">â“ Q&A</button>
       </div>
 
-      <!-- ── ARTICLES TAB ── -->
+      <!-- â”€â”€ ARTICLES TAB â”€â”€ -->
       <div class="admin-tab-panel active" id="panel-articles">
         <div class="admin-topbar">
           <h2>All Articles</h2>
@@ -110,7 +112,7 @@
         </div>
       </div>
 
-      <!-- ── WRITERS TAB ── -->
+      <!-- â”€â”€ WRITERS TAB â”€â”€ -->
       <div class="admin-tab-panel" id="panel-writers">
         <div class="admin-topbar">
           <h2>Writer Profiles</h2>
@@ -120,11 +122,11 @@
           </div>
         </div>
         <div class="writers-grid" id="writers-grid">
-          <div class="empty-state"><div class="icon">✍️</div><p>Loading…</p></div>
+          <div class="empty-state"><div class="icon">❓</div><p>Loading…</p></div>
         </div>
       </div>
 
-      <!-- ── SHORTS TAB ── -->
+      <!-- â”€â”€ SHORTS TAB â”€â”€ -->
       <div class="admin-tab-panel" id="panel-shorts">
         <div class="admin-topbar">
           <h2>Spiritual Shorts</h2>
@@ -146,13 +148,13 @@
         </div>
       </div>
 
-      <!-- ── SUBSCRIBERS TAB ── -->
+      <!-- â”€â”€ SUBSCRIBERS TAB â”€â”€ -->
       <div class="admin-tab-panel" id="panel-subscribers">
         <div class="admin-topbar">
           <h2>Email Subscribers</h2>
           <div class="topbar-actions">
             <input type="text" id="subscriber-search" placeholder="Search subscribers…" oninput="filterSubscribers(this.value)"/>
-            <button class="btn-secondary" onclick="exportSubscribersCSV()">⬇ Export CSV</button>
+            <button class="btn-secondary" onclick="exportSubscribersCSV()">â¬‡ Export CSV</button>
             <button class="btn-secondary" onclick="sendTestEmail()">📤 Test Email</button>
           </div>
         </div>
@@ -167,7 +169,7 @@
               <strong>Email Services</strong> → Add Gmail → copy <code>SERVICE_ID</code><br/>
               2. <strong>Email Templates</strong> → Create → set <code>To: {{to_email}}</code> → copy <code>TEMPLATE_ID</code><br/>
               3. <strong>Account → API Keys</strong> → copy <code>Public Key</code><br/>
-              4. Paste all three into <code>js/email.js</code> lines 22–24.
+              4. Paste all three into <code>js/email.js</code> lines 22â€“24.
             </p>
           </div>
           <button class="btn-icon" onclick="document.getElementById('brevo-banner').style.display='none'" title="Dismiss">✕</button>
@@ -187,10 +189,23 @@
         </div>
       </div>
 
+      <!-- â”€â”€ Q&A MODERATION TAB â”€â”€ -->
+      <div class="admin-tab-panel" id="panel-qa">
+        <div class="admin-topbar">
+          <h2>Q&A Moderation</h2>
+          <div class="topbar-actions">
+            <p style="font-size:.85rem;color:var(--text-muted)">Review and approve community questions</p>
+          </div>
+        </div>
+        <div id="qa-moderation-list" style="padding:1rem 0;">
+          <div class="empty-state"><div class="icon">❓</div><p>Click the Q&A tab to load questions.</p></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- ══ ARTICLE MODAL ══ -->
+  <!-- â•â• ARTICLE MODAL â•â• -->
   <div class="modal-overlay hidden" id="article-modal">
     <div class="modal">
       <div class="modal-header">
@@ -250,7 +265,7 @@
     </div>
   </div>
 
-  <!-- ══ WRITER MODAL ══ -->
+  <!-- â•â• WRITER MODAL â•â• -->
   <div class="modal-overlay hidden" id="writer-modal">
     <div class="modal">
       <div class="modal-header">
@@ -298,7 +313,7 @@
     </div>
   </div>
 
-  <!-- ══ SHORT MODAL ══ -->
+  <!-- â•â• SHORT MODAL â•â• -->
   <div class="modal-overlay hidden" id="short-modal">
     <div class="modal">
       <div class="modal-header">
@@ -308,7 +323,7 @@
       <form id="short-form" onsubmit="event.preventDefault();saveShort();">
         <div class="form-group">
           <label for="sf-arabic">Arabic Text (Optional)</label>
-          <textarea id="sf-arabic" rows="3" placeholder="بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ" style="font-size:1.5rem; text-align:right;" dir="rtl"></textarea>
+          <textarea id="sf-arabic" rows="3" placeholder="Ø¨ÙØ³Ù’Ù…Ù Ù±Ù„Ù„ÙŽÙ‘Ù°Ù‡Ù Ù±Ù„Ø±ÙŽÙ‘Ø­Ù’Ù…ÙŽÙ°Ù†Ù Ù±Ù„Ø±ÙŽÙ‘Ø­ÙÙŠÙ…Ù" style="font-size:1.5rem; text-align:right;" dir="rtl"></textarea>
         </div>
         <div class="form-group">
           <label for="sf-content">Content / Translation *</label>
@@ -339,28 +354,29 @@
 
   <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
+    <script src="../js/micro-content.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/email.js"></script>
   <script src="../js/admin.js"></script>
   <script>
-    // ── Theme ──────────────────────────────────────────
+    // â”€â”€ Theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const root = document.documentElement;
     const saved = localStorage.getItem('theme') || 'light';
     root.setAttribute('data-theme', saved);
     document.addEventListener('DOMContentLoaded', () => {
       const tb = document.getElementById('theme-toggle');
       if (tb) {
-        tb.textContent = saved === 'dark' ? '☀️' : '🌙';
+        tb.textContent = saved === 'dark' ? '☀️ï¸' : '🌙';
         tb.addEventListener('click', () => {
           const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
           root.setAttribute('data-theme', next);
           localStorage.setItem('theme', next);
-          tb.textContent = next === 'dark' ? '☀️' : '🌙';
+          tb.textContent = next === 'dark' ? '☀️ï¸' : '🌙';
         });
       }
     });
 
-    // ── Auth State → Show Panel ────────────────────────
+    // â”€â”€ Auth State → Show Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     initAuth(
       (user, userData) => {
         if (!userData || userData.role !== 'admin') {
@@ -393,7 +409,7 @@
       }
     );
 
-    // ── Login ──────────────────────────────────────────
+    // â”€â”€ Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function handleLogin() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
@@ -418,7 +434,7 @@
     async function handleSignOut() { await auth.signOut(); }
     window.handleSignOut = handleSignOut;
 
-    // ── Subscriber Search & Export ──────────────────────
+    // â”€â”€ Subscriber Search & Export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function filterSubscribers(q) {
       if (typeof subscribersCache === 'undefined') return;
       const filtered = subscribersCache.filter(s => s.email.toLowerCase().includes(q.toLowerCase()));
@@ -446,3 +462,4 @@
   </script>
 </body>
 </html>
+

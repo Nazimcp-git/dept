@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 
 <head>
@@ -25,9 +25,10 @@
     <ul class="nav-links">
       <li><a href="../">Home</a></li>
       <li><a href="articles.html">Articles</a></li>
+      <li><a href="community.html">Community</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
+      <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">☽</button>
       <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu"
         onclick="document.querySelector('nav').classList.toggle('menu-open')">☰</button>
       <!-- Auth UI injected by auth.js -->
@@ -141,7 +142,7 @@
     <div class="bm-empty-state hidden" id="bm-auth-empty" style="display: none;">
       <div class="bm-empty-illustration">
         <div class="bm-empty-circle"></div>
-        <span class="bm-empty-icon">🔐</span>
+        <span class="bm-empty-icon">ðŸ”</span>
       </div>
       <h3>Sign in to see your bookmarks</h3>
       <p>Bookmarks are synced to your account so you can access them from any device.</p>
@@ -164,7 +165,7 @@
     <div class="bm-empty-state hidden" id="bm-no-results" style="display: block;">
       <div class="bm-empty-illustration">
         <div class="bm-empty-circle"></div>
-        <span class="bm-empty-icon">🔍</span>
+        <span class="bm-empty-icon">ðŸ”</span>
       </div>
       <h3>No matching bookmarks</h3>
       <p>Try a different search term or clear the filter.</p>
@@ -183,6 +184,7 @@
         <ul>
           <li><a href="../">Home</a></li>
           <li><a href="articles.html">Articles</a></li>
+          <li><a href="community.html">Community</a></li>
         </ul>
       </div>
       <div>
@@ -199,6 +201,7 @@
 
   <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
+  <script src="../js/micro-content.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/bookmarks.js"></script>
 </body>

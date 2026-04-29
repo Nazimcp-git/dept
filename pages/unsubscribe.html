@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
+  
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -287,14 +287,14 @@
 
   <!-- Top bar -->
   <div class="topbar">
-    <a href="../" class="brand">☽ Noor Al-Quran</a>
+    <a href="../" class="brand">🌙 Noor Al-Quran</a>
   </div>
 
   <div class="card">
 
-    <!-- ── STATE: Confirm ── -->
+    <!-- â”€â”€ STATE: Confirm â”€â”€ -->
     <div class="state active" id="state-confirm">
-      <div class="icon-wrap warning">✉️</div>
+      <div class="icon-wrap warning">âœ‰ï¸</div>
       <h1>Unsubscribe</h1>
       <p class="subtitle">You'll stop receiving new article notifications from Noor Al-Quran.</p>
       <div class="email-pill" id="display-email">Loading…</div>
@@ -302,62 +302,63 @@
         Yes, unsubscribe me
       </button>
       <div class="or-divider">or</div>
-      <a href="../" class="btn-ghost">↩ Keep my subscription</a>
+      <a href="../" class="btn-ghost">â†© Keep my subscription</a>
       <p class="footer-note">
         Changed your mind? You can always re-subscribe on the <a href="../#newsletter">homepage</a>.
       </p>
     </div>
 
-    <!-- ── STATE: Success ── -->
+    <!-- â”€â”€ STATE: Success â”€â”€ -->
     <div class="state" id="state-success">
-      <div class="icon-wrap success">✓</div>
+      <div class="icon-wrap success">âœ“</div>
       <h1>You're unsubscribed</h1>
       <p class="subtitle">
         <strong id="success-email"></strong> has been removed from our mailing list.
         You won't receive any more article notifications.
       </p>
-      <a href="../" class="btn-ghost" style="margin-top:0.5rem;">← Back to Noor Al-Quran</a>
+      <a href="../" class="btn-ghost" style="margin-top:0.5rem;">â† Back to Noor Al-Quran</a>
       <p class="footer-note">
         Miss us already? <a href="../#newsletter">Re-subscribe here</a>.
       </p>
     </div>
 
-    <!-- ── STATE: Already Unsubscribed ── -->
+    <!-- â”€â”€ STATE: Already Unsubscribed â”€â”€ -->
     <div class="state" id="state-already">
-      <div class="icon-wrap success">☑️</div>
+      <div class="icon-wrap success">â˜‘ï¸</div>
       <h1>Already done</h1>
       <p class="subtitle">This email is not in our active subscriber list. Nothing to do!</p>
-      <a href="../" class="btn-ghost">← Back to homepage</a>
+      <a href="../" class="btn-ghost">â† Back to homepage</a>
     </div>
 
-    <!-- ── STATE: Error ── -->
+    <!-- â”€â”€ STATE: Error â”€â”€ -->
     <div class="state" id="state-error">
-      <div class="icon-wrap error">⚠️</div>
+      <div class="icon-wrap error">âš ï¸</div>
       <h1>Something went wrong</h1>
       <p class="subtitle" id="error-msg">We couldn't process your request. Please try again.</p>
       <button class="btn-primary" onclick="location.reload()">Try again</button>
       <div class="or-divider">or</div>
-      <a href="../" class="btn-ghost">← Back to homepage</a>
+      <a href="../" class="btn-ghost">â† Back to homepage</a>
     </div>
 
-    <!-- ── STATE: No Email ── -->
+    <!-- â”€â”€ STATE: No Email â”€â”€ -->
     <div class="state" id="state-no-email">
-      <div class="icon-wrap warning">🔍</div>
+      <div class="icon-wrap warning">ðŸ”</div>
       <h1>No email found</h1>
       <p class="subtitle">
         This link seems incomplete. Please use the unsubscribe link from the email notification you received.
       </p>
-      <a href="../" class="btn-ghost">← Back to homepage</a>
+      <a href="../" class="btn-ghost">â† Back to homepage</a>
     </div>
 
   </div>
 
-  <a href="../" class="back-link">← Back to Noor Al-Quran</a>
+  <a href="../" class="back-link">â† Back to Noor Al-Quran</a>
 
   <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
+    <script src="../js/micro-content.js"></script>
   <script>
-    // ── Read email from URL ────────────────────────────────
+    // â”€â”€ Read email from URL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const params    = new URLSearchParams(window.location.search);
     const emailParam = params.get('email') ? params.get('email').toLowerCase().trim() : null;
 
@@ -366,14 +367,14 @@
       document.getElementById(id).classList.add('active');
     }
 
-    // ── Init ──────────────────────────────────────────────
+    // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!emailParam || !emailParam.includes('@')) {
       showState('state-no-email');
     } else {
       document.getElementById('display-email').textContent = emailParam;
     }
 
-    // ── Unsubscribe action ────────────────────────────────
+    // â”€â”€ Unsubscribe action â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function doUnsubscribe() {
       const btn = document.getElementById('confirm-btn');
       btn.disabled = true;
@@ -394,3 +395,4 @@
 
 </body>
 </html>
+

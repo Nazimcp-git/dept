@@ -32,11 +32,12 @@ function formatDate(ts) {
 // ADMIN TABS
 // ══════════════════════════════════════════════════════
 function switchAdminTab(tab) {
-  ['articles', 'writers', 'shorts', 'subscribers'].forEach(t => {
+  ['articles', 'writers', 'shorts', 'subscribers', 'qa'].forEach(t => {
     document.getElementById(`admin-tab-${t}`)?.classList.toggle('active', t === tab);
     document.getElementById(`panel-${t}`)?.classList.toggle('active', t === tab);
   });
   if (tab === 'subscribers') loadAdminSubscribers();
+  if (tab === 'qa') loadAdminQuestions();
 }
 window.switchAdminTab = switchAdminTab;
 
@@ -68,7 +69,7 @@ function renderArticleTable(articles) {
       <td>❤️ ${a.likes || 0}</td>
       <td>
         <button class="btn-edit" onclick="openEditArticle('${a.id}')">Edit</button>
-        <button class="btn-danger" onclick="deleteArticle('${a.id}','${a.title.replace(/'/g,"\\'")}')">Delete</button>
+        <button class="btn-danger" onclick="deleteArticle('${a.id}','${a.title.replace(/'/g, "\\'")}')">Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -131,12 +132,19 @@ async function saveArticle() {
   if (!title || !content) { showToast('Title and content are required.'); return; }
 
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+  let microContent = null;
+  if (typeof MicroContent !== 'undefined') {
+    microContent = MicroContent.generate(content);
+  }
+
   const data = {
     title, content, category, tags, image, author, featured,
     writerId,
     slug: toSlug(title),
     excerpt: toExcerpt(content),
-    likes: editingArticleId ? (articlesCache.find(a => a.id === editingArticleId)?.likes || 0) : 0
+    likes: editingArticleId ? (articlesCache.find(a => a.id === editingArticleId)?.likes || 0) : 0,
+    ...(microContent ? { microContent } : {})
   };
 
   const btn = document.getElementById('save-article-btn');
@@ -162,6 +170,7 @@ async function saveArticle() {
       if (writerId) await db.collection('writers').doc(writerId).update({ articleCount: firebase.firestore.FieldValue.increment(1) });
 
       showToast('Article published ✓ — Notifying subscribers…');
+      triggerNotification(finalSlug, title);
 
       // ── Notify subscribers via Brevo ──────────────────
       if (typeof notifySubscribers === 'function') {
@@ -185,6 +194,65 @@ async function saveArticle() {
   }
 }
 window.saveArticle = saveArticle;
+
+// Make.com Push Notification Trigger
+async function triggerNotification(articleId, articleTitle) {
+  console.log(`[Push Notification] Gathering tokens for Make.com webhook...`);
+  try {
+    // 1. Get all subscribed tokens from Firestore
+    const snap = await db.collection('notification_tokens').get();
+    const tokens = [];
+    snap.forEach(doc => {
+      if (doc.data().token) {
+        tokens.push(doc.data().token);
+      }
+    });
+
+    const count = tokens.length;
+    console.log(`[Push Notification] Found ${count} subscribed devices.`);
+
+    if (count === 0) {
+      console.log('No devices subscribed yet.');
+      return;
+    }
+
+    // 2. Prepare payload for Make.com
+    const payload = {
+      articleId: articleId,
+      articleTitle: articleTitle,
+      tokens: tokens, // Array of FCM tokens
+      url: window.location.origin + '/pages/article.html?id=' + articleId
+    };
+
+    // 3. IMPORTANT: Replace this URL with your actual Make.com Webhook URL
+    const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/nnhgorg19kujsc2c0ioz3f2jauxpv9wg';
+
+    if (MAKE_WEBHOOK_URL.includes('YOUR_WEBHOOK_ID_HERE')) {
+      console.warn('⚠️ Make.com Webhook URL not set! Notifications will not be sent.');
+      showToast(`⚠️ Webhook not set! (Would have sent to ${count} devices)`);
+      return;
+    }
+
+    // 4. Send the data to Make.com
+    const response = await fetch(MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+      showToast(`📲 Push notifications triggered via Make.com!`);
+    } else {
+      throw new Error(`Webhook failed with status: ${response.status}`);
+    }
+
+  } catch (e) {
+    console.error('Error triggering push notifications via Make.com', e);
+    showToast('❌ Failed to trigger notifications');
+  }
+}
 
 async function deleteArticle(id, title) {
   if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
@@ -246,7 +314,7 @@ function renderWriterCards(writers) {
       <div class="wc-actions">
         <a class="btn-edit" href="profile?id=${w.id}" target="_blank" style="text-decoration:none;font-size:0.82rem">View</a>
         <button class="btn-edit" onclick="openEditWriter('${w.id}')">Edit</button>
-        <button class="btn-danger" onclick="deleteWriter('${w.id}','${w.name.replace(/'/g,"\\'")}')">Delete</button>
+        <button class="btn-danger" onclick="deleteWriter('${w.id}','${w.name.replace(/'/g, "\\'")}')">Delete</button>
       </div>
     </div>`;
   }).join('');
@@ -350,7 +418,7 @@ function renderShortsTable(shorts) {
   }
   tbody.innerHTML = shorts.map(s => {
     const preview = s.content.length > 50 ? s.content.substring(0, 50) + '...' : s.content;
-    const arabicPreview = s.arabic ? `<div style="font-family:serif;font-size:1.2rem;" dir="rtl">${s.arabic.substring(0,20)}...</div>` : '';
+    const arabicPreview = s.arabic ? `<div style="font-family:serif;font-size:1.2rem;" dir="rtl">${s.arabic.substring(0, 20)}...</div>` : '';
     return `
     <tr>
       <td>${arabicPreview}<div style="font-size:0.85rem">${preview}</div></td>
@@ -501,3 +569,73 @@ async function sendTestEmail() {
   }
 }
 window.sendTestEmail = sendTestEmail;
+
+// ══════════════════════════════════════════════════════
+// Q&A MODERATION
+// ══════════════════════════════════════════════════════
+let qaCache = [];
+
+function loadAdminQuestions() {
+  db.collection('community_questions').orderBy('createdAt', 'desc').get().then(snap => {
+    qaCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAdminQuestions(qaCache);
+  }).catch(e => console.error('Q&A load error:', e));
+}
+window.loadAdminQuestions = loadAdminQuestions;
+
+function renderAdminQuestions(questions) {
+  const container = document.getElementById('qa-moderation-list');
+  if (!container) return;
+  const pending = questions.filter(q => q.status === 'pending');
+  const approved = questions.filter(q => q.status === 'approved');
+  const rejected = questions.filter(q => q.status === 'rejected');
+
+  document.getElementById('qa-pending-count').textContent = pending.length;
+
+  let html = '';
+  if (pending.length) {
+    html += '<h4 style="margin:1rem 0 0.5rem;color:var(--text)">⏳ Pending (' + pending.length + ')</h4>';
+    html += pending.map(q => qaCardHTML(q)).join('');
+  }
+  if (approved.length) {
+    html += '<h4 style="margin:1.5rem 0 0.5rem;color:var(--text)">✅ Approved (' + approved.length + ')</h4>';
+    html += approved.map(q => qaCardHTML(q)).join('');
+  }
+  if (rejected.length) {
+    html += '<h4 style="margin:1.5rem 0 0.5rem;color:var(--text)">❌ Rejected (' + rejected.length + ')</h4>';
+    html += rejected.map(q => qaCardHTML(q)).join('');
+  }
+  if (!questions.length) html = '<div class="empty-state"><div class="icon">❓</div><p>No questions yet.</p></div>';
+  container.innerHTML = html;
+}
+
+function qaCardHTML(q) {
+  const date = q.createdAt ? (q.createdAt.toDate ? q.createdAt.toDate() : new Date(q.createdAt)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
+  let actions = '';
+  if (q.status === 'pending') {
+    actions = '<div class="admin-qa-actions"><button class="btn-approve" onclick="approveQuestion(\'' + q.id + '\');">✓ Approve</button><button class="btn-reject" onclick="rejectQuestion(\'' + q.id + '\');">✕ Reject</button></div>';
+  } else if (q.status === 'approved') {
+    actions = '<div class="admin-qa-actions"><button class="btn-reject" onclick="rejectQuestion(\'' + q.id + '\');">Revoke</button></div>';
+  } else {
+    actions = '<div class="admin-qa-actions"><button class="btn-approve" onclick="approveQuestion(\'' + q.id + '\');">Re-approve</button></div>';
+  }
+  return '<div class="admin-qa-card"><div class="qa-question-text">' + q.text + '</div><div class="qa-question-meta"><span>By ' + (q.userName || 'Unknown') + '</span><span>' + date + '</span><span class="qa-status-badge ' + q.status + '">' + q.status + '</span><span>💬 ' + (q.answerCount || 0) + ' answers</span></div>' + actions + '</div>';
+}
+
+async function approveQuestion(id) {
+  try {
+    await db.collection('community_questions').doc(id).update({ status: 'approved' });
+    showToast('Question approved ✓');
+    loadAdminQuestions();
+  } catch (e) { showToast('Error: ' + e.message); }
+}
+window.approveQuestion = approveQuestion;
+
+async function rejectQuestion(id) {
+  try {
+    await db.collection('community_questions').doc(id).update({ status: 'rejected' });
+    showToast('Question rejected.');
+    loadAdminQuestions();
+  } catch (e) { showToast('Error: ' + e.message); }
+}
+window.rejectQuestion = rejectQuestion;

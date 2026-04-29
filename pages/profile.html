@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
@@ -11,17 +11,18 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="../js/pwa.js"></script>
+    <script src="../js/pwa.js"></script>
 </head>
 <body>
 
   <div class="toast" id="toast"></div>
 
   <nav>
-    <a href="../" class="nav-brand">☽ Noor Al-Quran</a>
+    <a href="../" class="nav-brand">🌙 Noor Al-Quran</a>
     <ul class="nav-links">
       <li><a href="../">Home</a></li>
       <li><a href="articles.html">Articles</a></li>
+      <li><a href="community.html">Community</a></li>
     </ul>
     <div class="nav-actions">
       <button class="btn-icon" id="theme-toggle" title="Toggle dark mode">🌙</button>
@@ -61,21 +62,23 @@
     <h2 class="section-title" id="articles-heading">Articles</h2>
     <div class="section-divider"></div>
     <div class="articles-grid" id="writer-articles-grid">
-      <div class="empty-state"><div class="icon">📜</div><p>Loading articles…</p></div>
+      <div class="empty-state"><div class="icon">❓</div><p>Loading articles…</p></div>
     </div>
   </div>
 
   <footer>
     <div class="footer-grid">
-      <div><div class="footer-brand">☽ Noor Al-Quran</div><p>Scholarly reflections on the Qur'an.</p></div>
-      <div><h4>Navigate</h4><ul><li><a href="../">Home</a></li><li><a href="articles.html">Articles</a></li></ul></div>
+      <div><div class="footer-brand">🌙 Noor Al-Quran</div><p>Scholarly reflections on the Qur'an.</p></div>
+      <div><h4>Navigate</h4><ul><li><a href="../">Home</a></li><li><a href="articles.html">Articles</a></li><li><a href="community.html">Community</a></li></ul></div>
     </div>
     <div class="footer-bottom"><p>&copy; 2025 Noor Al-Quran.</p></div>
   </footer>
 
   <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
+    <script src="../js/micro-content.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/profile.js"></script>
 </body>
 </html>
+

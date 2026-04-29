@@ -1,18 +1,20 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — Noor Al-Quran</title>
-  <meta name="description" content="Sign in or create your Noor Al-Quran account."/>
+  <meta name="description" content="Sign in or create your Noor Al-Quran account." />
   <link rel="manifest" href="../manifest.json" />
   <meta name="theme-color" content="#1B4332" />
-  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/styles.css" />
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script src="../js/pwa.js"></script>
 </head>
+
 <body class="auth-page-body">
 
   <div class="auth-page">
@@ -37,7 +39,7 @@
         <!-- Mobile logo (shown only on small screens) -->
         <a href="../" class="auth-mobile-logo">☽ Noor Al-Quran</a>
 
-        <!-- ═══ SIGN IN VIEW ═══ -->
+        <!-- â•â•â• SIGN IN VIEW â•â•â• -->
         <div class="auth-view active" id="view-login">
           <div class="auth-view-header">
             <h1>Welcome back</h1>
@@ -49,11 +51,12 @@
           <form onsubmit="handleSignIn(event)" class="auth-form">
             <div class="form-group">
               <label for="login-email">Email</label>
-              <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" required/>
+              <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" required />
             </div>
             <div class="form-group">
               <label for="login-password">Password</label>
-              <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required/>
+              <input type="password" id="login-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                autocomplete="current-password" required />
             </div>
             <button type="submit" class="btn-primary btn-full" id="btn-signin">Sign In</button>
           </form>
@@ -66,7 +69,7 @@
           </div>
         </div>
 
-        <!-- ═══ REGISTER VIEW ═══ -->
+        <!-- â•â•â• REGISTER VIEW â•â•â• -->
         <div class="auth-view" id="view-register">
           <div class="auth-view-header">
             <h1>Create your account</h1>
@@ -78,15 +81,16 @@
           <form onsubmit="handleRegister(event)" class="auth-form">
             <div class="form-group">
               <label for="reg-name">Display Name</label>
-              <input type="text" id="reg-name" placeholder="Your name" autocomplete="name" required/>
+              <input type="text" id="reg-name" placeholder="Your name" autocomplete="name" required />
             </div>
             <div class="form-group">
               <label for="reg-email">Email</label>
-              <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email" required/>
+              <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email" required />
             </div>
             <div class="form-group">
               <label for="reg-password">Password <span class="label-hint">(min 6 characters)</span></label>
-              <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password" minlength="6" required/>
+              <input type="password" id="reg-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                autocomplete="new-password" minlength="6" required />
             </div>
             <button type="submit" class="btn-primary btn-full" id="btn-register">Create Account</button>
           </form>
@@ -96,12 +100,13 @@
           </div>
         </div>
 
-        <!-- ═══ VERIFICATION SENT VIEW ═══ -->
+        <!-- â•â•â• VERIFICATION SENT VIEW â•â•â• -->
         <div class="auth-view" id="view-verify">
           <div class="auth-verify-content">
-            <div class="verify-icon">✉️</div>
+            <div class="verify-icon">âœ‰ï¸</div>
             <h1>Check your email</h1>
-            <p class="verify-email-target">We've sent a verification link to<br><strong id="verify-email-display">your email</strong></p>
+            <p class="verify-email-target">We've sent a verification link to<br><strong id="verify-email-display">your
+                email</strong></p>
 
             <div class="verify-steps">
               <div class="verify-step">
@@ -120,19 +125,21 @@
 
             <div class="verify-actions">
               <button class="btn-primary btn-full" onclick="switchView('login')">Go to Sign In</button>
-              <button class="btn-secondary btn-full" id="btn-resend" onclick="resendVerification()">Resend Verification Email</button>
+              <button class="btn-secondary btn-full" id="btn-resend" onclick="resendVerification()">Resend Verification
+                Email</button>
             </div>
 
             <p class="verify-hint">Didn't receive the email? Check your spam folder or click resend above.</p>
           </div>
         </div>
 
-        <!-- ═══ UNVERIFIED WARNING VIEW ═══ -->
+        <!-- â•â•â• UNVERIFIED WARNING VIEW â•â•â• -->
         <div class="auth-view" id="view-unverified">
           <div class="auth-verify-content">
-            <div class="verify-icon">🔒</div>
+            <div class="verify-icon">ðŸ”’</div>
             <h1>Email not verified</h1>
-            <p class="verify-email-target">Your email <strong id="unverified-email-display">—</strong> hasn't been verified yet.</p>
+            <p class="verify-email-target">Your email <strong id="unverified-email-display">—</strong> hasn't been
+              verified yet.</p>
 
             <div class="verify-steps">
               <div class="verify-step">
@@ -151,14 +158,15 @@
 
             <div class="verify-actions">
               <button class="btn-primary btn-full" onclick="switchView('login')">Try Signing In Again</button>
-              <button class="btn-secondary btn-full" id="btn-resend-unverified" onclick="resendVerificationForUnverified()">Resend Verification Email</button>
+              <button class="btn-secondary btn-full" id="btn-resend-unverified"
+                onclick="resendVerificationForUnverified()">Resend Verification Email</button>
             </div>
 
             <p class="verify-hint">Didn't receive the email? Check your spam folder or click resend above.</p>
           </div>
         </div>
 
-        <!-- ═══ FORGOT PASSWORD VIEW ═══ -->
+        <!-- â•â•â• FORGOT PASSWORD VIEW â•â•â• -->
         <div class="auth-view" id="view-forgot">
           <div class="auth-view-header">
             <h1>Reset your password</h1>
@@ -170,7 +178,7 @@
           <form onsubmit="handleForgotPassword(event)" class="auth-form">
             <div class="form-group">
               <label for="forgot-email">Email</label>
-              <input type="email" id="forgot-email" placeholder="your@email.com" autocomplete="email" required/>
+              <input type="email" id="forgot-email" placeholder="your@email.com" autocomplete="email" required />
             </div>
             <button type="submit" class="btn-primary btn-full" id="btn-forgot">Send Reset Link</button>
           </form>
@@ -180,12 +188,13 @@
           </div>
         </div>
 
-        <!-- ═══ PASSWORD RESET SENT VIEW ═══ -->
+        <!-- â•â•â• PASSWORD RESET SENT VIEW â•â•â• -->
         <div class="auth-view" id="view-reset-sent">
           <div class="auth-verify-content">
             <div class="verify-icon">📧</div>
             <h1>Reset link sent</h1>
-            <p class="verify-email-target">We've sent a password reset link to<br><strong id="reset-email-display">your email</strong></p>
+            <p class="verify-email-target">We've sent a password reset link to<br><strong id="reset-email-display">your
+                email</strong></p>
 
             <div class="verify-steps">
               <div class="verify-step">
@@ -204,7 +213,8 @@
 
             <div class="verify-actions">
               <button class="btn-primary btn-full" onclick="switchView('login')">Go to Sign In</button>
-              <button class="btn-secondary btn-full" id="btn-resend-reset" onclick="handleForgotPasswordResend()">Resend Reset Email</button>
+              <button class="btn-secondary btn-full" id="btn-resend-reset" onclick="handleForgotPasswordResend()">Resend
+                Reset Email</button>
             </div>
 
             <p class="verify-hint">Didn't receive the email? Check your spam folder or click resend above.</p>
@@ -217,13 +227,14 @@
 
   <script src="../js/bug-reporter.js"></script>
   <script src="../js/firebase.js"></script>
+  <script src="../js/micro-content.js"></script>
   <script>
-    // ── Theme ──────────────────────────────────────────
+    // â”€â”€ Theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const root = document.documentElement;
     const savedTheme = localStorage.getItem('theme') || 'light';
     root.setAttribute('data-theme', savedTheme);
 
-    // ── View Switching ─────────────────────────────────
+    // â”€â”€ View Switching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function switchView(view) {
       document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
       const el = document.getElementById('view-' + view);
@@ -234,12 +245,12 @@
     }
     window.switchView = switchView;
 
-    // ── Check URL params ──────────────────────────────
+    // â”€â”€ Check URL params â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const urlParams = new URLSearchParams(window.location.search);
     const initialView = urlParams.get('view');
     if (initialView === 'register') switchView('register');
 
-    // ── Friendly Error Messages ───────────────────────
+    // â”€â”€ Friendly Error Messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function friendlyError(code) {
       const map = {
         'auth/user-not-found': 'No account found with this email.',
@@ -253,11 +264,11 @@
       return map[code] || 'Something went wrong. Please try again.';
     }
 
-    // ── Track last registered email for resend ────────
+    // â”€â”€ Track last registered email for resend â”€â”€â”€â”€â”€â”€â”€â”€
     let lastRegisteredEmail = '';
     let lastRegisteredPassword = '';
 
-    // ── Sign In ───────────────────────────────────────
+    // â”€â”€ Sign In â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function handleSignIn(e) {
       if (e) e.preventDefault();
       const email = document.getElementById('login-email')?.value.trim();
@@ -309,7 +320,7 @@
     }
     window.handleSignIn = handleSignIn;
 
-    // ── Register ──────────────────────────────────────
+    // â”€â”€ Register â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function handleRegister(e) {
       if (e) e.preventDefault();
       const name = document.getElementById('reg-name')?.value.trim();
@@ -369,7 +380,7 @@
     }
     window.handleRegister = handleRegister;
 
-    // ── Resend Verification ───────────────────────────
+    // â”€â”€ Resend Verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function resendVerification() {
       const btn = document.getElementById('btn-resend');
       if (!lastRegisteredEmail || !lastRegisteredPassword) {
@@ -382,7 +393,7 @@
         const cred = await auth.signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword);
         await cred.user.sendEmailVerification();
         await auth.signOut();
-        btn.textContent = '✓ Email sent!';
+        btn.textContent = 'âœ“ Email sent!';
         setTimeout(() => { btn.textContent = 'Resend Verification Email'; btn.disabled = false; }, 3000);
       } catch (e) {
         btn.textContent = 'Failed to resend. Try again.';
@@ -403,7 +414,7 @@
         const cred = await auth.signInWithEmailAndPassword(lastRegisteredEmail, lastRegisteredPassword);
         await cred.user.sendEmailVerification();
         await auth.signOut();
-        btn.textContent = '✓ Email sent!';
+        btn.textContent = 'âœ“ Email sent!';
         setTimeout(() => { btn.textContent = 'Resend Verification Email'; btn.disabled = false; }, 3000);
       } catch (e) {
         btn.textContent = 'Failed to resend. Try again.';
@@ -412,7 +423,7 @@
     }
     window.resendVerificationForUnverified = resendVerificationForUnverified;
 
-    // ── Forgot Password ───────────────────────────────
+    // â”€â”€ Forgot Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let lastForgotEmail = '';
 
     async function handleForgotPassword(e) {
@@ -456,7 +467,7 @@
       btn.disabled = true;
       try {
         await auth.sendPasswordResetEmail(lastForgotEmail);
-        btn.textContent = '✓ Email sent!';
+        btn.textContent = 'âœ“ Email sent!';
         setTimeout(() => { btn.textContent = 'Resend Reset Email'; btn.disabled = false; }, 3000);
       } catch (e) {
         btn.textContent = 'Failed to resend. Try again.';
@@ -465,7 +476,7 @@
     }
     window.handleForgotPasswordResend = handleForgotPasswordResend;
 
-    // ── If user is already logged in, redirect ────────
+    // â”€â”€ If user is already logged in, redirect â”€â”€â”€â”€â”€â”€â”€â”€
     auth.onAuthStateChanged(user => {
       if (user && user.emailVerified) {
         // Already logged in and verified — go home
@@ -478,4 +489,5 @@
     });
   </script>
 </body>
+
 </html>
